@@ -5,19 +5,11 @@
  * @since 29/06/2022
  */
 
-import express, { Router, Request, Response } from "express";
+import { Server } from "./server";
 
-const app = express();
- 
-const route = Router();
- 
-app.use(express.json());
- 
-route.get("/", (req: Request, res: Response) => {
-	res.json({ message: "hello world with Typescript" });
-});
- 
-app.use(route);
- 
- 
-app.listen(3333, () => console.log("Server running on port 3333"));
+(async () => {
+	const app = new Server();
+	
+	app.initialize();
+	await app.listen();
+})();

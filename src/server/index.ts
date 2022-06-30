@@ -1,16 +1,36 @@
-import express, { Router, Request, Response } from "express";
+import express, { Router, Request, Response, Express } from "express";
+import { IServer } from "./interfaces";
 
-const app = express();
+class Server implements IServer {
+	app: Express = express();
+	route: Router = Router();
 
-const route = Router();
+	public initialize = (): void => {
+		this.middlewares();
+		this.routes();
+	};
 
-app.use(express.json());
+	private middlewares = (): void => {
+		this.app.use(express.json());
+		this.app.use(this.route);
+	};
 
-route.get("/", (req: Request, res: Response) => {
-	res.json({ message: "hello world with Typescript" });
-});
+	private routes = () => {
+		this.route.get("/", (req: Request, res: Response) => {
+			res.json({ message: "hello world with Typescript" });
+		});
+	};
 
-app.use(route);
+	public listen = async (): Promise<boolean> => {
+		return new Promise((resolve) => {
+			this.app.listen(3333, () => {
+				console.log("App running on port 3333");
+				return resolve(true);
+			});
+		});
+	};
+}
 
-
-app.listen(3333, () => "server running on port 3333");
+export {
+	Server
+};
