@@ -1,4 +1,4 @@
-# Myndo API Gateway
+# ML Controller API
 
 This application consume the Mercado Livre API.
 
