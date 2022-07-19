@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2022",                                  
+    "target": "es2021",                                  
     "lib": ["es6"],                                           
     "experimentalDecorators": true,                      
     "emitDecoratorMetadata": true,                     
@@ -10,8 +10,13 @@
     "paths": {
       "@controllers/*": ["./src/controllers/*"],
       "@entity/*": ["./src/entity/*"],
-      "@midlewares/*": ["./src/midlewares/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
+      "@migrations/*": ["./src/migrations/*"],
       "@models/*": ["./src/models/*"],
+      "@providers/*": ["./src/providers/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@services/*": ["./src/services/*"],
+      "@tests/*": ["./src/tests/*"],
       "@utils/*": ["./src/utils/*"]
     },                                      
     "typeRoots": [

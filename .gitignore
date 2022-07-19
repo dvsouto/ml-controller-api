@@ -1,13 +1,20 @@
-# Node
+# VSCode
+.idea/
+.vscode/
+
+# Packages
 node_modules/
+
+# Build
+build/
 dist/
-yarn-error.log
+
+# Temp
+tmp/
+temp/
+
+# Localstorage
+.localstorage/
 
 # Environment
 .env
-
-# Mac OS X
-.DS_Store
-
-# Swap
-*.swp

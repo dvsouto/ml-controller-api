@@ -1,30 +1,43 @@
-import express, { Router, Request, Response, Express } from "express";
+import express, { Express, Router } from "express";
 import { IServer } from "./interfaces";
 
+import { AppRouter } from "@routes/appRouter";
+import { AuthenticatorMiddleware } from "@middlewares/authenticator";
+import { Environment } from "@utils/environment";
+
 class Server implements IServer {
-	app: Express = express();
-	route: Router = Router();
+	declare app: Express;
+	declare router: Router;
+
+	declare app_name: string;
+	declare app_port: number;
 
 	public initialize = (): void => {
+		this.app = express();
+		this.router = express.Router();
+
+		this.app_name = Environment().get("APP_NAME");
+		this.app_port = Environment().get("APP_PORT");
+
 		this.middlewares();
 		this.routes();
 	};
 
 	private middlewares = (): void => {
 		this.app.use(express.json());
-		this.app.use(this.route);
+		this.app.use(express.urlencoded({ extended: true }));
+
+		this.app.use(AuthenticatorMiddleware);
 	};
 
 	private routes = () => {
-		this.route.get("/", (req: Request, res: Response) => {
-			res.json({ message: "hello world with Typescript" });
-		});
+		this.app.use(AppRouter());
 	};
 
 	public listen = async (): Promise<boolean> => {
 		return new Promise((resolve) => {
-			this.app.listen(3333, () => {
-				console.log("App running on port 3333");
+			this.app.listen(this.app_port, () => {
+				console.log("App " + this.app_name + " running on port " + this.app_port.toString());
 				return resolve(true);
 			});
 		});

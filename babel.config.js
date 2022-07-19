@@ -15,8 +15,12 @@ module.exports = {
 			alias: {
 				"@controllers": "./src/controllers",
 				"@entity": "./src/entity",
-				"@midlewares": "./src/midlewares",
+				"@middlewares": "./src/middlewares",
+				"@migrations": "./src/migrations",
 				"@models": "./src/models",
+				"@providers": "./src/providers",
+				"@routes": "./src/routes",
+				"@services": "./src/services",
 				"@utils": "./src/utils"
 			}
 		}],

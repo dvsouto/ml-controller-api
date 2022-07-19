@@ -3,7 +3,7 @@ import { Router, Express } from "express";
 
 export interface IServer {
   readonly app: Express,
-  readonly route: Router,
+  router: Router;
 
   initialize: () => void,
   // middlewares: () => void,

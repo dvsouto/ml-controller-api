@@ -1,0 +1,49 @@
+version: '3.9'
+
+volumes:
+  database:
+
+networks:
+  default:
+    name: ml_controller_network
+
+services:
+  nodejs:
+    container_name: ml-controller-api-app
+    build:
+      context: .
+      dockerfile: ./docker/app.Dockerfile
+    environment:
+      DB_SCHEMA: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: postgres
+    volumes:
+      - .:/opt/app
+    depends_on:
+      - postgres
+    ports:
+      - '3000:3000'
+    links:
+      - postgres
+    network_mode: host
+    # networks:
+    #   - default
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./docker/postgres.Dockerfile
+    container_name: ml-controller-api-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '1234:1234'
+    volumes:
+      - database:/var/lib/postgresql/data
+    network_mode: host
+    # networks:
+    #   default:
+    #     aliases:
+    #       - default_network
