@@ -6,21 +6,29 @@
  */
 
 import { Server } from "./server";
+import { DumperStatus } from "./utils/dumper";
 
 (async () => {
 	const app = new Server();
 	
-	app.initialize();
+	await app.initialize();
 	
 	await app.listen();
 })();
 
-import { AppDataSource } from "./data-source";
-
-AppDataSource.initialize()
-	.then(() => {
-		console.log("Data Source has been initializeds!");
-	})
-	.catch((err) => {
-		console.error("Error during Data Source initialization", err);
-	});
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-var
+global.dumper = {
+	is_dumping: false,
+	has_dumped: false,
+	status: DumperStatus.NOT_STARTED,
+	message: "",
+	data: {
+		started_at: null,
+		finalized_at: null,
+		running_time: null
+	} as DumperData,
+	time: {
+		started_at: null,
+		finalized_at: null,
+	} as DumperTime
+} as dumper;

@@ -5,6 +5,8 @@ import { AppRouter } from "@routes/appRouter";
 import { AuthenticatorMiddleware } from "@middlewares/authenticator";
 import { Environment } from "@utils/environment";
 
+import { AppDataSource } from "@src/data-source";
+
 class Server implements IServer {
 	declare app: Express;
 	declare router: Router;
@@ -12,7 +14,7 @@ class Server implements IServer {
 	declare app_name: string;
 	declare app_port: number;
 
-	public initialize = (): void => {
+	public initialize = async (): Promise<void> => {
 		this.app = express();
 		this.router = express.Router();
 
@@ -21,6 +23,8 @@ class Server implements IServer {
 
 		this.middlewares();
 		this.routes();
+
+		await this.connectDatabase();
 	};
 
 	private middlewares = (): void => {
@@ -32,6 +36,23 @@ class Server implements IServer {
 
 	private routes = () => {
 		this.app.use(AppRouter());
+	};
+
+	private connectDatabase = async (): Promise<boolean> => {
+		console.log("Tentando se conectar com o banco");
+
+		return new Promise((resolve, reject) => {
+			AppDataSource.initialize()
+				.then(() => {
+					console.log("Postgres conectado com sucesso!");
+
+					return resolve(true);
+				})
+				.catch((err) => {
+					console.log("Erro ao se conectar com o Postgres: ", err);
+					return reject(false);
+				});
+		});
 	};
 
 	public listen = async (): Promise<boolean> => {

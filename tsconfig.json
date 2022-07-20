@@ -8,6 +8,7 @@
     "rootDir": "./src",                                  
     "baseUrl": ".",                                      
     "paths": {
+      "@src/*": ["./src/*"],
       "@controllers/*": ["./src/controllers/*"],
       "@entity/*": ["./src/entity/*"],
       "@middlewares/*": ["./src/middlewares/*"],

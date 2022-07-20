@@ -7,6 +7,7 @@ const categoriesRouter = (router: Router) => {
 
 	router.get("/list", controller.list);
 	router.get("/listAll", controller.listAll);
+	router.get("/dump", controller.dump);
 
 	return router;
 };
