@@ -4,8 +4,14 @@ volumes:
   database:
 
 networks:
-  default:
-    name: ml_controller_network
+  ml_network_app:
+    name: ml_network_app
+    external: false
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.16.0.0/24"
+          gateway: "172.16.0.1"
 
 services:
   nodejs:
@@ -25,25 +31,24 @@ services:
     ports:
       - '3000:3000'
     links:
-      - postgres
-    network_mode: host
-    # networks:
-    #   - default
+      - "postgres:db_postgres"
+    # network_mode: host
+    networks:
+      ml_network_app:
 
   postgres:
+    container_name: ml-controller-api-postgres
     build:
       context: .
       dockerfile: ./docker/postgres.Dockerfile
-    container_name: ml-controller-api-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - '1234:1234'
+      - '5432:5432'
     volumes:
       - database:/var/lib/postgresql/data
-    network_mode: host
-    # networks:
-    #   default:
+    networks:
+      ml_network_app:
     #     aliases:
     #       - default_network

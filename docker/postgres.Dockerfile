@@ -59,6 +59,8 @@ WORKDIR ${PG_HOME}
 # RUN initdb /var/lib/postgresql/data
 # RUN pg_ctl -D /var/lib/postgresql/data -l logfile start
 
+EXPOSE 5432
+
 # Entrypoint
 ENTRYPOINT ["/database/postgres-entrypoint.sh"]
 
