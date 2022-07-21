@@ -1,18 +1,11 @@
+/* eslint-disable no-prototype-builtins */
 
 import { Request, Response } from "express";
 import { MercadoLivreService } from "@services/MercadoLivre";
 import { Dumper, DumperStatus } from "@utils/dumper";
+import _ from "lodash";
 
 class CategoriesController {
-	declare is_dumping: boolean;
-	declare dump_promise: Promise<unknown>;
-	declare has_dumped: boolean;
-
-	constructor(){
-		this.is_dumping = false;
-		this.has_dumped = false;
-	}
-
 	public async list(req: Request, res: Response) {
 		const mercado_livre = new MercadoLivreService();
 		const ml_response = await mercado_livre.categories.list();
@@ -43,58 +36,56 @@ class CategoriesController {
 				data: dumper.getData(),
 			};
 
-			dumper.stop();
+			setTimeout(() => dumper.stop(), 500);
 
 			return res.json(response);
 		}
 
 		if (dumper.getStatus() === DumperStatus.NOT_STARTED) {
-			// eslint-disable-next-line no-async-promise-executor
+			// eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-unused-vars
 			const dump_categories = () => new Promise(async (resolve_dump, reject_dump) => {
 				const mercado_livre = new MercadoLivreService();
 				const ml_response = await mercado_livre.categories.listAll();
+				const all_categories = ml_response.data as object;
 
-				const promises_categories = Object.keys(ml_response.data).map((key_category) => {
-					// eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-unused-vars
-					return new Promise(async (resolve, reject) => {
-						const category = ml_response.data[key_category];
-						const exists_sub_categories = (category.children_categories as Array<object>).length > 0;
-						// eslint-disable-next-line prefer-const
-						let has_parent_category = false;
-						
-						if ((category.path_from_root as Array<object>).length == 1 && (category.path_from_root as Array<object>)[0]["id"] == category.id) {
-							has_parent_category = true;
+				const add_categories = {} as object;
+
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				_.forEach(all_categories, async (obj_category, idx_category) => {
+					const path_from_root = obj_category["path_from_root"] as Array<object>;
+					const parent_category = path_from_root[0] as object;
+
+					// console.log("@Path:", path_from_root);
+
+					_.forEach(path_from_root, async (obj_path_category, idx_path_category) => {
+
+						if (idx_path_category == 0 && ! add_categories.hasOwnProperty(obj_path_category["id"])) {
+							add_categories[obj_path_category["id"] as string] = {
+								id: obj_path_category["id"],
+								name: obj_path_category["name"],
+								subcategories: [] as Array<string>
+							} as object;
+
+							console.log("@Add category:", obj_path_category["id"], obj_path_category["name"]);
+
+							// Continue
+							return true;
 						}
 
-						if (has_parent_category) {
-							console.log(category);
+						if (! (add_categories[parent_category["id"] as string]["subcategories"] as Array<string>).includes(obj_path_category["id"] as string)) {
+							console.log("@Add subcategory:", obj_path_category["id"], obj_path_category["name"]);
+	
+							(add_categories[parent_category["id"] as string]["subcategories"] as Array<string>).push(obj_path_category["id"] as string);
 						}
-						// console.log(has_parent_category);
-						// const sub_categories = category.children_categories as Array<object>;
-
-						// console.log(category);
-						// const promises_sub_categories = sub_categories.map((sub_category) => {
-						// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-						// 	return new Promise((resolve_sub_category, reject_sub_category) => {
-						// 		console.log(sub_category);
-						// 		resolve_sub_category(sub_category);
-						// 	});
-						// });
-
-						// const result_sub_categories = await Promise.allSettled(promises_sub_categories);
-						// console.log(result_sub_categories);
-						resolve(category);
 					});
 				});
 
-				const result_categories = await Promise.allSettled(promises_categories);
+				console.log(add_categories);
+				console.log("OK!");
 
 				resolve_dump(true);
-
-				// console.log(result_categories);
 			});
-
-
+			
 			dumper.start(dump_categories);
 		}
 

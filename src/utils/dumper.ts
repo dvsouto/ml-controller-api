@@ -24,13 +24,13 @@ class Dumper {
 
 	private getRunningTime = (): number => {
 		const started_at = this.dumper.time.started_at;
-		const time_now = moment.now();
+		const time_now = this.dumper.time.finalized_at ? this.dumper.time.finalized_at : moment.now();
 		const running_time = time_now - started_at;
 
 		return running_time;
 	};
 
-	public start = (execute: () => Promise<unknown>): Promise<boolean> => {
+	public start = async (execute: () => Promise<unknown>): Promise<boolean> => {
 		this.dumper.status = DumperStatus.DUMPING;
 		this.dumper.data.started_at = this.getTimeNow();
 		this.dumper.data.finalized_at = null;
@@ -38,28 +38,42 @@ class Dumper {
     
 		this.dumper.time.started_at = moment.now();
 
+		this.setDumper();
+
+		console.log(this.dumper);
+
 		return new Promise((resolve, reject) => {
-			execute()
-				.then(() => {
-					this.dumper.is_dumping = false;
-					this.dumper.status = DumperStatus.FINALIZED;
-					this.dumper.message = "Dumper finalized";
-					this.dumper.has_dumped = true;
-					this.dumper.data.finalized_at = this.getTimeNow();
-					this.dumper.time.finalized_at = moment.now();
-
-					return resolve(true);
-				})
-				.catch((err) => {
-					this.dumper.is_dumping = false;
-					this.dumper.status = DumperStatus.FAIL;
-					this.dumper.message = "Dumper fail: " + err;
-					this.dumper.has_dumped = true;
-					this.dumper.data.finalized_at = this.getTimeNow();
-					this.dumper.time.finalized_at = moment.now();
-
-					return reject(false);
-				});
+			setTimeout(() => {
+				execute()
+					.then(() => {
+						this.dumper.is_dumping = false;
+						this.dumper.status = DumperStatus.FINALIZED;
+						this.dumper.message = "Dumper finalized";
+						this.dumper.has_dumped = true;
+						this.dumper.data.finalized_at = this.getTimeNow();
+						this.dumper.time.finalized_at = moment.now();
+						this.dumper.data.running_time = this.getRunningTime();
+	
+						this.setDumper();
+	
+						return resolve(true);
+					})
+					.catch((err) => {
+						console.log("FAIL");
+	
+						this.dumper.is_dumping = false;
+						this.dumper.status = DumperStatus.FAIL;
+						this.dumper.message = "Dumper fail: " + err;
+						this.dumper.has_dumped = true;
+						this.dumper.data.finalized_at = this.getTimeNow();
+						this.dumper.time.finalized_at = moment.now();
+						this.dumper.data.running_time = this.getRunningTime();
+	
+						this.setDumper();
+	
+						return reject(false);
+					});
+			}, 1);
 		});
 	};
 
@@ -72,7 +86,11 @@ class Dumper {
 		this.dumper.time.finalized_at = null;
 		this.dumper.time.started_at = null;
 
-		global.dumper = this.dumper;
+		this.dumper.data.finalized_at = null;
+		this.dumper.data.started_at = null;
+		this.dumper.data.running_time = null;
+
+		this.setDumper();
 	};
 
 	public isDumping = (): boolean => {
@@ -92,11 +110,15 @@ class Dumper {
 	};
 
 	public getData = (): DumperData => {
-		return global.dumper.data as DumperData;
+		return this.dumper.data as DumperData;
 	};
 
 	public getDumper = (): dumper => {
 		return global.dumper as dumper;
+	};
+
+	private setDumper = (): void => {
+		global.dumper = this.dumper;
 	};
 
 }
