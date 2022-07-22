@@ -16,5 +16,8 @@ temp/
 # Localstorage
 .localstorage/
 
+# Logs
+yarn-error.log
+
 # Environment
 .env
