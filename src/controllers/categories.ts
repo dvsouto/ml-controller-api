@@ -3,10 +3,22 @@
 import { Request, Response } from "express";
 import { MercadoLivreService } from "@services/MercadoLivre";
 import { Dumper, DumperStatus } from "@utils/dumper";
+
+import { CategoryModel } from "@models/Category";
+
 import _ from "lodash";
 
 class CategoriesController {
 	public async list(req: Request, res: Response) {
+		// const category = AppDataSource.getRepository(Category);
+		const categoryModel = new CategoryModel();
+
+		categoryModel.insert({
+			ml_id: "haha",
+			name: "Teste"
+		}).then(() => console.log("Inserido com sucesso"))
+			.catch((err) => console.log("Erro ao inserir: ", err));
+
 		const mercado_livre = new MercadoLivreService();
 		const ml_response = await mercado_livre.categories.list();
 
