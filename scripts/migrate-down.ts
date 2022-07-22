@@ -1,11 +1,10 @@
-import { AppDataSource } from "../src/data-source";
+import { CliDataSource } from "../src/data-source";
 
 console.log("Undo last migrations...");
 
-
 export default ( async () => {
-	await AppDataSource.initialize();
-	await AppDataSource.undoLastMigration();
+	await CliDataSource.initialize();
+	await CliDataSource.undoLastMigration();
 
 	console.log("OK!");
 })();

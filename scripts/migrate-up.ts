@@ -1,11 +1,10 @@
-import { AppDataSource } from "../src/data-source";
+import { CliDataSource } from "../src/data-source";
 
 console.log("Running migrations...");
 
-
 export default ( async () => {
-	await AppDataSource.initialize();
-	await AppDataSource.runMigrations();
+	await CliDataSource.initialize();
+	await CliDataSource.runMigrations();
 
 	console.log("OK!");
 })();
