@@ -24,6 +24,12 @@ export class CreateSubCategoryTable1658465149295 implements MigrationInterface {
 					isNullable: false,
 				},
 				{
+					name: "subcategory_ml_id",
+					type: "varchar",
+					isNullable: true,
+					default: null,
+				},
+				{
 					name: "name",
 					type: "varchar",
 					isNullable: false,
@@ -79,15 +85,25 @@ export class CreateSubCategoryTable1658465149295 implements MigrationInterface {
 			referencedTableName: "category",
 			onDelete: "CASCADE"
 		}));
+
+		// Subcategory Foreign Key
+		await queryRunner.createForeignKey("subcategory", new TableForeignKey({
+			columnNames: ["subcategory_ml_id"],
+			referencedColumnNames: ["ml_id"],
+			referencedTableName: "subcategory",
+			onDelete: "CASCADE"
+		}));
 	}
 
 	public async down(queryRunner: QueryRunner): Promise<void> {
 		const table = await queryRunner.getTable("subcategory");
-		const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("category_ml_id") !== -1);
+		const categoryForeignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("category_ml_id") !== -1);
+		const subcategoryForeignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("subcategory_ml_id") !== -1);
 
 		await queryRunner.dropIndex("subcategory", "IDX_SUBCATEGORY_ML_ID");
 		await queryRunner.dropIndex("subcategory", "IDX_SUBCATEGORY_NAME");
-		await queryRunner.dropForeignKey("subcategory", foreignKey);
+		await queryRunner.dropForeignKey("subcategory", categoryForeignKey);
+		await queryRunner.dropForeignKey("subcategory", subcategoryForeignKey);
 		await queryRunner.dropTable("subcategory", true);
 	}
 
