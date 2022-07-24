@@ -4,9 +4,10 @@ import { Request, Response } from "express";
 import { MercadoLivreService } from "@services/MercadoLivre";
 import { Dumper, DumperStatus } from "@utils/dumper";
 
-import { CategoryModel } from "@models/Category";
+import { CategoryData, CategoryModel } from "@models/Category";
 
 import _ from "lodash";
+import { SubcategoryData, SubcategoryModel } from "@src/models/Subcategory";
 
 class CategoriesController {
 	public async list(req: Request, res: Response) {
@@ -92,7 +93,39 @@ class CategoriesController {
 					});
 				});
 
-				console.log(add_categories);
+				const categoryModel = new CategoryModel();
+				const subcategoryModel = new SubcategoryModel();
+
+				_.forEach(add_categories, async (obj_category) => {
+					const ml_category = all_categories[obj_category["id"]];
+
+					const this_category = await categoryModel.insertOrUpdate({ ml_id: ml_category["id"] as string}, {
+						ml_id: ml_category["id"] as string,
+						name: ml_category["name"] as string,
+						permalink: ml_category["permalink"] as string | null,
+						picture: ml_category["picture"] as string | null
+					} as CategoryData);
+
+					_.forEach(obj_category["subcategories"], async (key_subcategory: string) => {
+						const ml_subcategory = all_categories[key_subcategory];
+						const ml_subcategory_path_from_root = ml_subcategory["path_from_root"] as Array<object>;
+						const has_children = (ml_subcategory["children_categories"] as Array<object>).length > 0;
+						const ml_subcategory_parent = ml_subcategory_path_from_root.length > 2 ? ml_subcategory_path_from_root[ml_subcategory_path_from_root.length-2] : null;
+						const subcategory_ml_id = ml_subcategory_parent ? ml_subcategory_parent["id"] : null;
+						
+						// eslint-disable-next-line @typescript-eslint/no-unused-vars
+						const this_subcategory = await subcategoryModel.insertOrUpdate({ ml_id: ml_subcategory["id"] }, {
+							ml_id: ml_subcategory["id"],
+							category_ml_id: this_category["ml_id"],
+							subcategory_ml_id: subcategory_ml_id,
+							name: ml_subcategory["name"],
+							picture: ml_subcategory["picture"],
+							permalink: ml_subcategory["permalink"],
+							has_children: has_children
+						} as SubcategoryData);
+					});
+				});
+
 				console.log("OK!");
 
 				resolve_dump(true);
