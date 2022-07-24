@@ -1,13 +1,13 @@
 /* eslint-disable no-prototype-builtins */
 
+import _ from "lodash";
 import { Request, Response } from "express";
 import { MercadoLivreService } from "@services/MercadoLivre";
 import { Dumper, DumperStatus } from "@utils/dumper";
 
 import { CategoryData, CategoryModel } from "@models/Category";
-
-import _ from "lodash";
-import { SubcategoryData, SubcategoryModel } from "@src/models/Subcategory";
+import { SubcategoryData, SubcategoryModel } from "@models/Subcategory";
+import { SettingsModel, SettingsData, SettingsType } from "@models/Settings";
 
 class CategoriesController {
 	public async list(req: Request, res: Response) {
@@ -62,6 +62,8 @@ class CategoriesController {
 				const all_categories = ml_response.data as object;
 
 				const add_categories = {} as object;
+				// eslint-disable-next-line prefer-const
+				let add_settings = [] as Array<string>;
 
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				_.forEach(all_categories, async (obj_category, idx_category) => {
@@ -79,14 +81,22 @@ class CategoriesController {
 								subcategories: [] as Array<string>
 							} as object;
 
-							console.log("@Add category:", obj_path_category["id"], obj_path_category["name"]);
+							// console.log("@Add category:", obj_path_category["id"], obj_path_category["name"]);
+
+							_.forOwn(obj_category["settings"], async (value_setting, key_setting) => {
+								if (add_settings.includes(key_setting)) {
+									return false;
+								}
+
+								add_settings.push(key_setting);
+							});
 
 							// Continue
 							return true;
 						}
 
 						if (! (add_categories[parent_category["id"] as string]["subcategories"] as Array<string>).includes(obj_path_category["id"] as string)) {
-							console.log("@Add subcategory:", obj_path_category["id"], obj_path_category["name"]);
+							// console.log("@Add subcategory:", obj_path_category["id"], obj_path_category["name"]);
 	
 							(add_categories[parent_category["id"] as string]["subcategories"] as Array<string>).push(obj_path_category["id"] as string);
 						}
@@ -95,10 +105,51 @@ class CategoriesController {
 
 				const categoryModel = new CategoryModel();
 				const subcategoryModel = new SubcategoryModel();
+				const settingsModel = new SettingsModel();
+
+				const doAddSettings = (settings: object) => {
+					_.forOwn(settings, async (value_setting, key_setting) => {
+						if (add_settings.includes(key_setting)) {
+							let settings_type = typeof value_setting as SettingsType;
+
+							if (settings_type === "object") {
+								settings_type = SettingsType.ARRAY_STRING;
+								
+								if (_.isArray(settings_type)) {
+									if (settings_type.length > 0) {
+										const first_setting_type = typeof value_setting[0];
+
+										if (first_setting_type == "string") {
+											settings_type = SettingsType.ARRAY_STRING;
+										}
+
+										if (first_setting_type == "number") {
+											settings_type = SettingsType.ARRAY_NUMBER;
+										}
+
+										if (first_setting_type == "boolean") {
+											settings_type = SettingsType.ARRAY_BOOLEAN;
+										}
+									}
+								}
+							}
+
+							// Create settings
+							const this_settings = await settingsModel.insertOrUpdate({ name: key_setting }, {
+								name: key_setting,
+								type: settings_type
+							} as SettingsData);
+						}
+					});
+				};
 
 				_.forEach(add_categories, async (obj_category) => {
 					const ml_category = all_categories[obj_category["id"]];
+					const ml_category_settings = ml_category["settings"] as object;
 
+					doAddSettings(ml_category_settings);
+
+					// Add category									
 					const this_category = await categoryModel.insertOrUpdate({ ml_id: ml_category["id"] as string}, {
 						ml_id: ml_category["id"] as string,
 						name: ml_category["name"] as string,
@@ -112,7 +163,9 @@ class CategoriesController {
 						const has_children = (ml_subcategory["children_categories"] as Array<object>).length > 0;
 						const ml_subcategory_parent = ml_subcategory_path_from_root.length > 2 ? ml_subcategory_path_from_root[ml_subcategory_path_from_root.length-2] : null;
 						const subcategory_ml_id = ml_subcategory_parent ? ml_subcategory_parent["id"] : null;
-						
+						const subcategory_settings = ml_subcategory["settings"];
+
+						// Add subcategory		
 						// eslint-disable-next-line @typescript-eslint/no-unused-vars
 						const this_subcategory = await subcategoryModel.insertOrUpdate({ ml_id: ml_subcategory["id"] }, {
 							ml_id: ml_subcategory["id"],
@@ -125,6 +178,8 @@ class CategoriesController {
 						} as SubcategoryData);
 					});
 				});
+
+				console.log(add_settings);
 
 				console.log("OK!");
 
