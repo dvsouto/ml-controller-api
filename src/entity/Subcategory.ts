@@ -12,6 +12,9 @@ export class Subcategory {
     @Column()
     category_ml_id: string;
 
+    @Column({ nullable: true })
+    subcategory_ml_id: string;
+
     @Column()
     name: string;
 
