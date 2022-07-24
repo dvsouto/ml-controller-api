@@ -10,7 +10,8 @@ interface IBaseModel {
 	findOneBy: (where: FindOptionsWhere<typeof Entity> | FindOptionsWhere<typeof Entity>[]) => Promise<typeof Entity | null>;
   insert: (data: object) => Promise<InsertResult>;
 	insertOrUpdate: (where: FindOptionsWhere<typeof Entity> | FindOptionsWhere<typeof Entity>[], data: object) => Promise<any>; 
-	
+	insertIfNotExists: (where: FindOptionsWhere<typeof Entity> | FindOptionsWhere<typeof Entity>[], data: object) => Promise<any>;
+
 	getRepository: () => Repository<typeof Entity>; 
 	//update: (where: FindOptionsWhere<typeof Entity> | FindOptionsWhere<typeof Entity>[], data: object) => Promise<[]>;
 }

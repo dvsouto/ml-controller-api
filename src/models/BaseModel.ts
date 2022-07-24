@@ -47,6 +47,18 @@ class BaseModel implements IBaseModel {
 		return this.insert(data);
 	}
 
+	public async insertIfNotExists(where: FindOptionsWhere<typeof Entity> | FindOptionsWhere<typeof Entity>[], data: object): Promise<any>{
+		const findData = await this.findOneBy(where);
+
+		if (findData) {
+			return new Promise((resolve) => {
+				resolve(findData);
+			});
+		}
+
+		return this.insert(data);
+	}
+
 	/////////
 
 	public getRepository(): Repository<typeof Entity>{
