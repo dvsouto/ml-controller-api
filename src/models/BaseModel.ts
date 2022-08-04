@@ -1,6 +1,6 @@
 import { DataSource, Entity, EntityOptions, EntityTarget, FindOneOptions, FindOptionsWhere, InsertResult, Repository } from "typeorm"; 
 import { AppDataSource } from "@src/data-source";
-import { IBaseModel } from "./interfaces";
+import { IBaseModel, ModelColumn } from "./interfaces";
 import _, { forEach } from "lodash";
 
 class BaseModel<ModelData> implements IBaseModel<ModelData> {
@@ -8,6 +8,12 @@ class BaseModel<ModelData> implements IBaseModel<ModelData> {
 	declare dataSource: DataSource;
 	declare repository: Repository<typeof Entity>;
 
+	/**
+	 * Create model
+	 * 
+	 * @constructor
+	 * @param {EntityTarget} entity - Model entity
+	 */
 	constructor(entity: EntityTarget<{
     (options?: EntityOptions): ClassDecorator;
     (name?: string, options?: EntityOptions): ClassDecorator; }>)
@@ -67,11 +73,16 @@ class BaseModel<ModelData> implements IBaseModel<ModelData> {
 		
 	/////////
 
-	protected getColumns(): object {
+	/**
+	 * Get model columns
+	 * 
+	 * @returns {Record<string, ModelColumn>} - Object with ModelColumn's
+	 */
+	protected getColumns(): Record<string, ModelColumn> {
 		const metaData = this.dataSource.getMetadata(this.entity);
 		const ownColumns = metaData.ownColumns;
 
-		const columns = {};
+		const columns = {} as Record<string, ModelColumn>;
 
 		forEach(ownColumns, (column) => {
 			const typeColumn = typeof column.type === "function" ? column.type.toString().toLowerCase().match(/(string|number|integer|int|bigint|smallint|float|double|real|money|date|time|timestamp|varchar|char|character|boolean|text|bytea|bit|uuid|json|xml|serial|blob)/ig)?.[0] : column.type.toLowerCase();
@@ -81,10 +92,10 @@ class BaseModel<ModelData> implements IBaseModel<ModelData> {
 				isPrimary: column.isPrimary,
 				isNullable: column.isNullable,
 				databaseName: column.databaseName
-			};
+			} as ModelColumn;
 		}); 
 
-		return columns;
+		return columns as Record<string, ModelColumn>;
 	}
 }
 
