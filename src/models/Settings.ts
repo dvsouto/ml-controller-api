@@ -1,10 +1,10 @@
-import { Settings } from "@src/entity/Settings";
+import { Settings } from "@entity/Settings";
 import { BaseModel } from "./BaseModel";
 
 type SettingsData = {
 	id?: string;
 	name: string;
-	type: string;
+	type: SettingsType;
 	created_at?: Date;
 	updated_at?: Date;
 }
@@ -20,7 +20,7 @@ enum SettingsType {
   OBJECT = "object"
 }
 
-class SettingsModel extends BaseModel {
+class SettingsModel extends BaseModel<SettingsData> {
 	constructor(){
 		super(Settings);
 	}
@@ -28,6 +28,5 @@ class SettingsModel extends BaseModel {
 
 export {
 	SettingsModel,
-	SettingsData,
 	SettingsType
 };

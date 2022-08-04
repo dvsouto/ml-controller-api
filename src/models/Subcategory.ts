@@ -1,4 +1,4 @@
-import { Subcategory } from "@src/entity/Subcategory";
+import { Subcategory } from "@entity/Subcategory";
 import { BaseModel } from "./BaseModel";
 
 type SubcategoryData = {
@@ -14,13 +14,12 @@ type SubcategoryData = {
     updated_at?: Date;
 }
 
-class SubcategoryModel extends BaseModel {
+class SubcategoryModel extends BaseModel<SubcategoryData> {
 	constructor(){
 		super(Subcategory);
 	}
 }
 
 export {
-	SubcategoryModel,
-	SubcategoryData
+	SubcategoryModel
 };
