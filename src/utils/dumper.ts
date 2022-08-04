@@ -121,10 +121,28 @@ class Dumper {
 		global.dumper = this.dumper;
 	};
 
+	public static initializeDumper = () => {
+		global.dumper = {
+			is_dumping: false,
+			has_dumped: false,
+			status: DumperStatus.NOT_STARTED,
+			message: "",
+			data: {
+				started_at: null,
+				finalized_at: null,
+				running_time: null
+			} as DumperData,
+			time: {
+				started_at: null,
+				finalized_at: null,
+			} as DumperTime
+		} as dumper;
+	};
+
 }
 
 export {
 	Dumper,
 
-	DumperStatus
+	DumperStatus,
 };

@@ -7,6 +7,8 @@ import { Environment } from "@utils/environment";
 
 import { AppDataSource } from "@src/data-source";
 
+import { Dumper } from "@utils/dumper";
+
 class Server implements IServer {
 	declare app: Express;
 	declare router: Router;
@@ -15,6 +17,8 @@ class Server implements IServer {
 	declare app_port: number;
 
 	public initialize = async (): Promise<void> => {
+		this.setGlobalTypes();
+
 		this.app = express();
 		this.router = express.Router();
 
@@ -62,6 +66,10 @@ class Server implements IServer {
 				return resolve(true);
 			});
 		});
+	};
+
+	private setGlobalTypes = () => {
+		Dumper.initializeDumper();
 	};
 }
 

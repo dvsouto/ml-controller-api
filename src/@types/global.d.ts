@@ -1,6 +1,7 @@
-export {};
-
+/* eslint-disable no-var */
 declare global {
+  var dumper: dumper;
+
   interface dumper {
     is_dumping: boolean;
     has_dumped: boolean;
@@ -21,3 +22,5 @@ declare global {
     finalized_at: number | null;
   }
 }
+
+export default global;
