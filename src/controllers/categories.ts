@@ -5,9 +5,9 @@ import { Request, Response } from "express";
 import { MercadoLivreService } from "@services/MercadoLivre";
 import { Dumper, DumperStatus } from "@utils/dumper";
 
-import { CategoryData, CategoryModel } from "@models/Category";
-import { SubcategoryData, SubcategoryModel } from "@models/Subcategory";
-import { SettingsModel, SettingsData, SettingsType } from "@models/Settings";
+import { CategoryModel } from "@models/Category";
+import { SubcategoryModel } from "@models/Subcategory";
+import { SettingsModel, SettingsType } from "@models/Settings";
 
 class CategoriesController {
 	public async list(req: Request, res: Response) {
@@ -138,7 +138,7 @@ class CategoriesController {
 							const this_settings = await settingsModel.insertOrUpdate({ name: key_setting }, {
 								name: key_setting,
 								type: settings_type
-							} as SettingsData);
+							});
 						}
 					});
 				};
@@ -148,14 +148,14 @@ class CategoriesController {
 					const ml_category_settings = ml_category["settings"] as object;
 
 					doAddSettings(ml_category_settings);
-
+				
 					// Add category									
 					const this_category = await categoryModel.insertOrUpdate({ ml_id: ml_category["id"] as string}, {
 						ml_id: ml_category["id"] as string,
 						name: ml_category["name"] as string,
 						permalink: ml_category["permalink"] as string | null,
 						picture: ml_category["picture"] as string | null
-					} as CategoryData);
+					});
 
 					_.forEach(obj_category["subcategories"], async (key_subcategory: string) => {
 						const ml_subcategory = all_categories[key_subcategory];
@@ -175,7 +175,7 @@ class CategoriesController {
 							picture: ml_subcategory["picture"],
 							permalink: ml_subcategory["permalink"],
 							has_children: has_children
-						} as SubcategoryData);
+						});
 					});
 				});
 
