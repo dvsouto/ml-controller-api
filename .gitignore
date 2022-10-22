@@ -12,6 +12,12 @@ dist/
 # Temp
 tmp/
 temp/
+.tmp/
+.temp/
+public/tmp
+public/temp
+public/.tmp
+public/.temp/
 
 # Localstorage
 .localstorage/
