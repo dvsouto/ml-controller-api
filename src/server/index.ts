@@ -5,7 +5,7 @@ import { AppRouter } from "@routes/appRouter";
 import { AuthenticatorMiddleware } from "@middlewares/authenticator";
 import { Environment } from "@utils/environment";
 
-import { AppDataSource } from "@src/data-source";
+import { AppDataSource, CliDataSource } from "@src/data-source";
 
 import { Dumper } from "@utils/dumper";
 
@@ -31,6 +31,12 @@ class Server implements IServer {
 		await this.connectDatabase();
 	};
 
+	public initializeCli = async (): Promise<void> => {
+		this.setGlobalTypes();
+
+		await this.connectDatabaseCli();
+	};
+
 	private middlewares = (): void => {
 		this.app.use(express.json());
 		this.app.use(express.urlencoded({ extended: true }));
@@ -47,6 +53,23 @@ class Server implements IServer {
 
 		return new Promise((resolve, reject) => {
 			AppDataSource.initialize()
+				.then(() => {
+					console.log("Postgres conectado com sucesso!");
+
+					return resolve(true);
+				})
+				.catch((err) => {
+					console.log("Erro ao se conectar com o Postgres: ", err);
+					return reject(false);
+				});
+		});
+	};
+
+	private connectDatabaseCli = async (): Promise<boolean> => {
+		console.log("Tentando se conectar com o banco");
+
+		return new Promise((resolve, reject) => {
+			CliDataSource.initialize()
 				.then(() => {
 					console.log("Postgres conectado com sucesso!");
 
