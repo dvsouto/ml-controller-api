@@ -26,18 +26,20 @@ export class CreateSupplierProductTable1666462285541 implements MigrationInterfa
 				{
 					name: "picture",
 					type: "varchar",
-					isNullable: true
+					isNullable: true,
 				},
 				{
 					name: "supplier_value",
-					type: "number",
+					type: "decimal",
+					precision: 4,
 					isNullable: false
 				},
 				{
-					name: "percentual_lucro",
-					type: "number",
+					name: "default_profit_percentage",
+					type: "decimal",
+					precision: 2,
 					isNullable: false,
-					default: 50
+					default: 50,
 				},
 				{
 					name: "created_at",
