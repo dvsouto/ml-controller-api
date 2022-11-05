@@ -8,9 +8,10 @@ Install this dependencies:
 ```sh
 sudo apt-get install nodejs
 yarn global add n
-n 14.17.6
+sudo n 14.17.6
 ```
-- Yarn (1.22.18)
+
+- **Yarn** (v1.22.18)
 ```sh
 sudo apt-get install curl
 curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
@@ -18,17 +19,35 @@ echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/source
 sudo apt install yarn
 ```
 
+- **Docker Engine** (v20.10.21) and **Docker Compose**
+```sh
+# Setup docker repository
+sudo apt-get install ca-certificates curl gnupg sb-release
+sudo mkdir -p /etc/apt/keyrings & curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install docker-ce and docker-compose plugin
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+```
+
 ## Installation
-To install de application, run the command with npm or yarn:
+To install this application, run the command with npm or yarn:
 ```sh
 yarn install
 ```
 
 ## Run application
-- **Development**: Run the script **"yarn dev"**
+First, create the environment file on the root: .env
+
+- **Development**: Run the docker and migrations:
 ```sh
-yarn dev
+yarn docker-start
+yarn migrate:up
 ```
+
+The application running on http://localhost:3000 and database Postgres on port 5432.
+Use **"yarn log-app"** to view logs of app container and **"yarn log-postgres"** to view logs of database container.
 
 - **Production**: Build with **"yarn build"** and run the script **"yarn start"**
 ```sh
@@ -36,11 +55,20 @@ yarn build
 yarn start
 ```
 
+The application has builded on /dist folder.
+
+## Test
+Run command **"yarn test"** to start jest/supertest tests:
+```sh
+yarn test
+```
+
 ---
 
 **Powered By:** 
 * NodeJS (v14.17.6)
 * Yarn (v1.22.18)
+* Docker (v20.10.21)
 * Typescript (v4.7.4)
 * Express (v4.18.1)
 * TypeORM (v0.3.6)
