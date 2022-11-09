@@ -3,7 +3,7 @@ import { parse, Parser } from "csv-parse";
 import * as fs from "fs";
 
 import { isFloat } from "@utils/numbers";
-import { parseProduct } from "@utils/strings";
+import { parseBrand, parseProduct, parseSettings } from "@utils/strings";
 
 type CSVOptions = {
 	delimiterField: string
@@ -162,6 +162,8 @@ class CSVController {
 
 			if (typeof columnData === "string" && key == "nome") {
 				data["nome_parseado"] = parseProduct(columnData);
+				data["marca"] = parseBrand(data["nome_parseado"]);
+				data["settings"] = parseSettings(data["nome_parseado"]);
 			}
 
 			data[key] = columnData;

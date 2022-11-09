@@ -30,31 +30,29 @@ const dictionaries = {
 		"cort.grama": "Cortador de Grama",
 		"cb emmborr": "Cabo Emborrachado",
 		"curva p/eletrod.": "Curva para Eletroduto",
-		"\sc/c\s": "\sCom Cabo\s",
-		"\sC/\sC\s": "\sCom Cabo\s",
-		"\sC/\sc\s": "\sCom Cabo\s",
-		"\sc/\sC\s": "\sCom Cabo\s",
 		"d agua": "d'água",
 		"espac.nivelad.roboz.": "Espaçador Nivelador Robozinho",
 		"espuma de poli": "Espuma e Poliuretano",
 		"fita embal": "Fita Embalar",
 		"fita isol": "Fita Isolante",
 		"plas.sintet.": "Plástico Sintético",
+		"plas.sintet.c/c": "Plástico Sintético Com Cabo",
 
 		// Regex
 		"/^ext\s/": "Extensão\s",
+		"/[cC][/][\\s]{0,1}[cC]/": "Com Cabo",
 	},
 	regex: {
 		"/([0-9]{1,3})[mM]([\\sx]{0,1})/": "$1M$2", // Ex: 10m
 		"/([0-9]{1,3})[vV]([\\sx]{0,1})/": "$1V$2", // Ex: 127v
 		"/([0-9]{1,2})[aA]([\\sx]{0,1})/": "$1A$2", // Ex: 20a
-		"/([0-9]{1,4})[wW]([\\sx]{0,1})/": "$1W$2", // Ex: 3400w
+		"/([0-9]{1,6})[wW]([\\sx]{0,1})/": "$1W$2", // Ex: 3400w
 		"/([0-9]{1,4})[gG]/": "$1G", // Ex: 200g
 		"/([0-9]{1,4})[lL]/": "$1L", // Ex: 500l,
 		"/([0-9]{1,3})[mM][tT]([\\sx]{0,1})/": "$1MT$2", // Ex: 10mt
 		"/([0-9]{1,3})[cC][mM]([\\sx]{0,1})/": "$1CM$2", // Ex: 10cm
 		"/([0-9]{1,4})[mM][mM]([\\sx]{0,1})/": "$1MM$2", // Ex: 100mm ou 50mmx100mm = 100MM ou 50MMx100MM
-		"/([0-9]{1,4})[mM][lL]([\\sx]{0,1})/": "$ML$2", // Ex: 250ml
+		"/([0-9]{1,4})[mM][lL]([\\sx]{0,1})/": "$1ML$2", // Ex: 250ml
 		"/([0-9]{1,4})[kK][gG]/": "$1KG", // Ex: 15kg
 		"/([0-9]{1,4})[gG][rR]/": "$1GR", // Ex: 200gr
 		"/([0-9]{1,4})[lL][tT]/": "$1LT", // Ex: 500lt
@@ -62,7 +60,7 @@ const dictionaries = {
 		"/([0-9]{1,4})[lL][tT][sS]/": "$1LTS", // Ex: 500lts
 		"/([0-9]{1})[pP][aA][sS]/": "$1 Pás", // Ex: 3 Pás
 		"/([0-9]{1})[Ll][aA][mM][pP]/": "$1 Lâmpadas", // Ex: 2 Lâmpadas
-		"/([0-9]{1,4})[\\s]{0,1}[pP][cCç]/": "$1 Peças", // Ex: 200 Peças @TODO ç maiusculo
+		"/([0-9]{1,4})[\\s]{0,1}[pP][cCçÇ]/": "$1 Peças", // Ex: 200 Peças
 	},
 	lowercase: { 
 		"a": "a", 
@@ -93,6 +91,7 @@ const dictionaries = {
 		"ip66": "IP66",
 		"ip67": "IP67",
 		"ip68": "IP68",
+		"ip69": "IP69",
 		"r.c.a": "R.C.A",
 		"pvc": "PVC",
 		"l_c": "L_C",

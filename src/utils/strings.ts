@@ -1,4 +1,6 @@
+import { brands } from "./brands";
 import { dictionaries } from "./dictionaries";
+import { settings } from "./settings";
 
 enum STR_GENRE {
   FEM = "FEM",
@@ -50,7 +52,7 @@ const parseProduct = (product: string): string => {
 
 	productWordsText = productWordsText.replace(/\s([a-z])[/]/g, " $1/ "); // Add space after "/" 
 	productWordsText = productWordsText.replace(/([a-z])[.]([a-z])/g, "$1 $2"); // Add space after "." and remove the "." abbreviation
-	productWordsText = productWordsText.replace(/([a-z])[.]\s/g, "$1 "); // Add space after "." and remove the "." abbreviation
+	productWordsText = productWordsText.replace(/([a-z])[.]([\s0-9])/g, "$1 $2"); // Add space after "." and remove the "." abbreviation
 	productWordsText = productWordsText.replace(/\s\s+/g, " "); // Remove duplicated spaces
 
 	// Apply first de 'all' dictionary, this dictionary apply on the all words
@@ -100,10 +102,10 @@ const parseProduct = (product: string): string => {
 					const regexFind = new RegExp(dictionaryKey.substring(1, dictionaryKey.length-1), "g");
 					const strReplace = dictionary[dictionaryKey];
 
-					const matches = productWord.matchAll(regexFind);
-					const firstMatch = matches.next().value;
+					// const matches = productWord.matchAll(regexFind);
+					// const firstMatch = matches.next().value;
 
-					if (firstMatch) {
+					if (regexFind.test(productWord)) {
 						productWord = productWord.replace(regexFind, strReplace);
 					}
 				}
@@ -134,6 +136,50 @@ const parseProduct = (product: string): string => {
 	return producParsed;
 };
 
+const parseBrand = (product: string) => {
+	let productBrand = "UNKNOWN";
+
+	brands.every((brand) => {
+		const findBrandRegex = new RegExp("\\s" + brand.toLowerCase(), "g");
+		// const matches = product.toLowerCase().matchAll(findBrandRegex);
+		// const firstMatch = matches.next().value;
+
+		if (findBrandRegex.test(product.toLowerCase())) {
+			productBrand = brand;
+
+			return false; // Break
+		}
+
+		return true; // Continue
+	});
+
+	return productBrand;
+};
+
+const parseSettings = (product: string) => {
+	const productSettings = {};
+
+	Object.keys(settings).forEach((settingName) => {
+		const settingRegexArr = settings[settingName];
+
+		settingRegexArr.every((settingRegex) => {
+			const matchSetting = (settingRegex as RegExp).exec(product.toLowerCase() + " ");
+
+			if (matchSetting) {
+				productSettings[settingName] = matchSetting[1];
+
+				return false; // Break
+			}
+
+			return true; // Continue
+		});
+	});
+
+	return productSettings;
+};
+
 export {
 	parseProduct,
+	parseBrand,
+	parseSettings,
 };
