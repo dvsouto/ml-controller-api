@@ -4,6 +4,9 @@ interface IMLAccessToken {
   expires_in: number;
   scope: string;
   user_id: number;
+  refresh_token?: string; // ML not returning ??
+  created_at?: number;
+	expires_at?: number;
 }
 
 type MLResponse = {
