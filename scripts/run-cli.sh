@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Script name
-name=$1
+name=$(echo $1 | awk 'BEGIN{FS="";RS="-";ORS=""} {$0=toupper(substr($0,1,1)) substr($0,2)} 1')
+name=${name,}
 
 # Check if parameter exists
 if [ $# -eq 0 ]; then
