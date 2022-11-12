@@ -19,8 +19,8 @@ class BaseModel<ModelData> implements IBaseModel<ModelData> {
     (name?: string, options?: EntityOptions): ClassDecorator; }>)
 	{
 		this.entity = entity;
-		this.dataSource = AppDataSource;
-		this.repository = AppDataSource.getRepository(this.entity);
+		this.dataSource = AppDataSource();
+		this.repository = this.dataSource.getRepository(this.entity);
 	}
 
 	public findAll(): Promise<typeof Entity[]>{

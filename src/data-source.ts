@@ -18,22 +18,43 @@ const dataSourceOptions = {
 	entities: ["./src/entity/*.ts"],
 	migrations: ["./src/migrations/*.ts"],
 	subscribers: [],
+	extra: {
+		options: "-c statement_timeout=5500ms",
+		idleTimeoutMillis: 1,
+		max: 1,
+		connectionTimeoutMillis: 2000,
+	},
 };
 
-export const AppDataSource = new DataSource({
-	...dataSourceOptions,
-	host: process.env.PG_HOST,
-	port: parseInt(process.env.PG_PORT),
-	username: process.env.PG_USER,
-	password: process.env.PG_PASSWORD,
-	database: process.env.PG_DB,
-} as DataSourceOptions);
+export const AppDataSource = (): DataSource => {
+	if (! global.DataSource) {
+		global.DataSource = new DataSource({
+			...dataSourceOptions,
+			host: process.env.PG_HOST,
+			port: parseInt(process.env.PG_PORT),
+			username: process.env.PG_USER,
+			password: process.env.PG_PASSWORD,
+			database: process.env.PG_DB,
+		} as DataSourceOptions);
+	}
 
-export const CliDataSource = new DataSource({
-	...dataSourceOptions,
-	host: "localhost",
-	port: parseInt(process.env.PG_PORT),
-	username: process.env.PG_USER,
-	password: process.env.PG_PASSWORD,
-	database: process.env.PG_DB,
-} as DataSourceOptions);
+	return global.DataSource as DataSource;
+};
+
+
+
+export const CliDataSource = (): DataSource => {
+	if (! global.CliDataSource) {
+		global.CliDataSource = new DataSource({
+			...dataSourceOptions,
+			host: "localhost",
+			port: parseInt(process.env.PG_PORT),
+			username: process.env.PG_USER,
+			password: process.env.PG_PASSWORD,
+			database: process.env.PG_DB,
+		} as DataSourceOptions);
+	}
+
+	return global.CliDataSource as DataSource;
+};
+
