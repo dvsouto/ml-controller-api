@@ -14,11 +14,11 @@ class CategoriesController {
 		// const category = AppDataSource.getRepository(Category);
 		const categoryModel = new CategoryModel();
 
-		categoryModel.insert({
-			ml_id: "haha",
-			name: "Teste"
-		}).then(() => console.log("Inserido com sucesso"))
-			.catch((err) => console.log("Erro ao inserir: ", err));
+		// categoryModel.insert({
+		// 	ml_id: "haha",
+		// 	name: "Teste"
+		// }).then(() => console.log("Inserido com sucesso"))
+		// 	.catch((err) => console.log("Erro ao inserir: ", err));
 
 		const mercado_livre = new MercadoLivreService();
 		const ml_response = await mercado_livre.categories.list();
@@ -62,8 +62,9 @@ class CategoriesController {
 				const all_categories = ml_response.data as object;
 
 				const add_categories = {} as object;
-				// eslint-disable-next-line prefer-const
-				let add_settings = [] as Array<string>;
+				const add_settings = [] as Array<string>;
+				let total_categories = 0;
+				let total_subcategories = 0;
 
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				_.forEach(all_categories, async (obj_category, idx_category) => {
@@ -81,6 +82,8 @@ class CategoriesController {
 								subcategories: [] as Array<string>
 							} as object;
 
+							total_categories++;
+
 							// console.log("@Add category:", obj_path_category["id"], obj_path_category["name"]);
 
 							_.forOwn(obj_category["settings"], async (value_setting, key_setting) => {
@@ -97,8 +100,9 @@ class CategoriesController {
 
 						if (! (add_categories[parent_category["id"] as string]["subcategories"] as Array<string>).includes(obj_path_category["id"] as string)) {
 							// console.log("@Add subcategory:", obj_path_category["id"], obj_path_category["name"]);
-	
 							(add_categories[parent_category["id"] as string]["subcategories"] as Array<string>).push(obj_path_category["id"] as string);
+							
+							total_subcategories++;
 						}
 					});
 				});
@@ -143,47 +147,79 @@ class CategoriesController {
 					});
 				};
 
-				_.forEach(add_categories, async (obj_category) => {
+				const p_add_categories = [];
+
+				_.forEach(add_categories, (obj_category) => {
+					console.log("@Add category:", obj_category["id"], obj_category["name"]);
+
 					const ml_category = all_categories[obj_category["id"]];
 					const ml_category_settings = ml_category["settings"] as object;
 
 					doAddSettings(ml_category_settings);
 				
-					// Add category									
-					const this_category = await categoryModel.insertOrUpdate({ ml_id: ml_category["id"] as string}, {
-						ml_id: ml_category["id"] as string,
-						name: ml_category["name"] as string,
-						permalink: ml_category["permalink"] as string | null,
-						picture: ml_category["picture"] as string | null
-					});
+					// Add category				
+					p_add_categories.push(new Promise(resolve_category => {
+						categoryModel.insertOrUpdate({ ml_id: ml_category["id"] as string}, {
+							ml_id: ml_category["id"] as string,
+							name: ml_category["name"] as string,
+							permalink: ml_category["permalink"] as string | null,
+							picture: ml_category["picture"] as string | null
+						}).then((this_category) => {
+							// const p_add_subcategories = [];
 
-					_.forEach(obj_category["subcategories"], async (key_subcategory: string) => {
-						const ml_subcategory = all_categories[key_subcategory];
-						const ml_subcategory_path_from_root = ml_subcategory["path_from_root"] as Array<object>;
-						const has_children = (ml_subcategory["children_categories"] as Array<object>).length > 0;
-						const ml_subcategory_parent = ml_subcategory_path_from_root.length > 2 ? ml_subcategory_path_from_root[ml_subcategory_path_from_root.length-2] : null;
-						const subcategory_ml_id = ml_subcategory_parent ? ml_subcategory_parent["id"] : null;
-						const subcategory_settings = ml_subcategory["settings"];
+							const addNextSubcategory = () => {
+								const key_subcategory = (obj_category["subcategories"] as Array<string>).shift() as string;
+								const ml_subcategory = all_categories[key_subcategory];
+								const ml_subcategory_path_from_root = ml_subcategory["path_from_root"] as Array<object>;
+								const has_children = (ml_subcategory["children_categories"] as Array<object>).length > 0;
+								const ml_subcategory_parent = ml_subcategory_path_from_root.length > 2 ? ml_subcategory_path_from_root[ml_subcategory_path_from_root.length-2] : null;
+								const subcategory_ml_id = ml_subcategory_parent ? ml_subcategory_parent["id"] : null;
+								const subcategory_settings = ml_subcategory["settings"];
 
-						// Add subcategory		
-						// eslint-disable-next-line @typescript-eslint/no-unused-vars
-						const this_subcategory = await subcategoryModel.insertOrUpdate({ ml_id: ml_subcategory["id"] }, {
-							ml_id: ml_subcategory["id"],
-							category_ml_id: this_category["ml_id"],
-							subcategory_ml_id: subcategory_ml_id,
-							name: ml_subcategory["name"],
-							picture: ml_subcategory["picture"],
-							permalink: ml_subcategory["permalink"],
-							has_children: has_children
+								console.log("@Add subcategory:", ml_subcategory["id"], ml_subcategory["name"]);
+
+								subcategoryModel.insertOrUpdate({ ml_id: ml_subcategory["id"] }, {
+									ml_id: ml_subcategory["id"],
+									category_ml_id: this_category["ml_id"],
+									subcategory_ml_id: subcategory_ml_id,
+									name: ml_subcategory["name"],
+									picture: ml_subcategory["picture"],
+									permalink: ml_subcategory["permalink"],
+									has_children: has_children
+								}).then(() => {
+									if ((obj_category["subcategories"] as Array<string>).length <= 0) {
+										resolve_category(true);
+									} else {
+										addNextSubcategory();
+									}
+								}).catch((err) => {
+									console.log("ERRO - ", err);
+
+									if ((obj_category["subcategories"] as Array<string>).length <= 0) {
+										resolve_category(true);
+									} else {
+										addNextSubcategory();
+									}
+								});
+							};
+
+							addNextSubcategory();
 						});
-					});
+					}));
 				});
 
-				console.log(add_settings);
+				console.log("Total categories:", total_categories);
+				console.log("Total subcategories:", total_subcategories);
 
-				console.log("OK!");
+				Promise.allSettled(p_add_categories).then(() => {
+					console.log("OK!");
 
-				resolve_dump(true);
+					resolve_dump(true);
+				}).catch(() => {
+					console.log("OK, with errors!");
+
+					reject_dump(true);
+				});
 			});
 			
 			dumper.start(dump_categories);

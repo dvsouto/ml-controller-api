@@ -52,7 +52,7 @@ class Server implements IServer {
 		console.log("Tentando se conectar com o banco");
 
 		return new Promise((resolve, reject) => {
-			AppDataSource.initialize()
+			AppDataSource().initialize()
 				.then(() => {
 					console.log("Postgres conectado com sucesso!");
 
@@ -69,7 +69,7 @@ class Server implements IServer {
 		console.log("Tentando se conectar com o banco");
 
 		return new Promise((resolve, reject) => {
-			CliDataSource.initialize()
+			CliDataSource().initialize()
 				.then(() => {
 					console.log("Postgres conectado com sucesso!");
 
