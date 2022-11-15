@@ -20,9 +20,9 @@ const dataSourceOptions = {
 	subscribers: [],
 	extra: {
 		options: "-c statement_timeout=5500ms",
-		idleTimeoutMillis: 1,
-		max: 1,
-		connectionTimeoutMillis: 2000,
+		idleTimeoutMillis: 10000,
+		max: 10,
+		connectionTimeoutMillis: 5000,
 	},
 };
 

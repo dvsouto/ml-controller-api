@@ -1,5 +1,5 @@
 import { DataSource, Entity, EntityOptions, EntityTarget, FindOneOptions, FindOptionsWhere, InsertResult, Repository } from "typeorm"; 
-import { AppDataSource } from "@src/data-source";
+import { AppDataSource, CliDataSource } from "@src/data-source";
 import { IBaseModel, ModelColumn } from "./interfaces";
 import _, { forEach } from "lodash";
 
@@ -19,8 +19,12 @@ class BaseModel<ModelData> implements IBaseModel<ModelData> {
     (name?: string, options?: EntityOptions): ClassDecorator; }>)
 	{
 		this.entity = entity;
-		this.dataSource = AppDataSource();
+		this.dataSource = this.getDataSource();
 		this.repository = this.dataSource.getRepository(this.entity);
+	}
+
+	private getDataSource(): DataSource{
+		return require.main.filename.includes("/cli.js") ? CliDataSource() : AppDataSource();
 	}
 
 	public findAll(): Promise<typeof Entity[]>{

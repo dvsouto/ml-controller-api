@@ -7,4 +7,6 @@ export default ( async () => {
 	await CliDataSource().undoLastMigration();
 
 	console.log("OK!");
+
+	process.exit();
 })();

@@ -192,8 +192,13 @@ const parseSettings = (product: string) => {
 	return productSettings;
 };
 
+const replaceAccents = (str: string): string => {
+	return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
+
 export {
 	parseProduct,
 	parseBrand,
 	parseSettings,
+	replaceAccents,
 };

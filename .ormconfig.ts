@@ -20,6 +20,12 @@ export default {
 	"subscribers": [
 		"src/subscriber/**/*.ts"
 	],
+	"seeds": [
+		"src/seeds/**/*{.ts,.js}"
+	],
+  "factories":  [
+		"src/factories/**/*{.ts,.js}"
+	],
 	"cli": {
 		"entitiesDir": "src/entity",
 		"migrationsDir": "src/migrations",

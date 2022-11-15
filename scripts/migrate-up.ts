@@ -7,4 +7,6 @@ export default ( async () => {
 	await CliDataSource().runMigrations();
 
 	console.log("OK!");
+
+	process.exit();
 })();
