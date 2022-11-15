@@ -1,6 +1,8 @@
+import { exit } from "process";
 import { brands } from "./brands";
 import { dictionaries } from "./dictionaries";
 import { settings } from "./settings";
+import { toRegex } from "./toRegex";
 
 enum STR_GENRE {
   FEM = "FEM",
@@ -116,35 +118,47 @@ const parseProduct = (product: string): string => {
 	});
 
 	// Join parsed words
-	let producParsed = productWords.join(" ");
+	let productParsed = productWords.join(" ");
 
 	// Set genre
-	if (producParsed.indexOf("#") > 0) {
-		const productGenre = getStrGenre(producParsed);
+	if (productParsed.indexOf("#") > 0) {
+		const productGenre = getStrGenre(productParsed);
 
 		if (productGenre == STR_GENRE.MASC) {
-			producParsed = producParsed.replace(/[#]/g, "o");
+			productParsed = productParsed.replace(/[#]/g, "o");
 		}
 
 		if (productGenre == STR_GENRE.FEM) {
-			producParsed = producParsed.replace(/[#]/g, "a");
+			productParsed = productParsed.replace(/[#]/g, "a");
 		}
 	}
 
-	// producParsed = producParsed.replace(/[0-9]{1,4}[a-z]/g, "");
+	if ([".", "/", "-", "_"].includes(productParsed.substring(productParsed.length-1))) {
+		productParsed = productParsed.substring(0, productParsed.length-1);
+	}
+
+	// productParsed = productParsed.replace(/[0-9]{1,4}[a-z]/g, "");
   
-	return producParsed;
+	return productParsed;
 };
 
 const parseBrand = (product: string) => {
 	let productBrand = "UNKNOWN";
-
+	
 	brands.every((brand) => {
-		const findBrandRegex = new RegExp("\\s" + brand.toLowerCase(), "g");
-		// const matches = product.toLowerCase().matchAll(findBrandRegex);
-		// const firstMatch = matches.next().value;
+		let brandRegex = "";
+		brand = brand.toLowerCase();
 
-		if (findBrandRegex.test(product.toLowerCase())) {
+		for (let i = 0; i < brand.length; i++) {
+			const charActual = brand.charAt(i);
+			const regexCharActual = toRegex[charActual];
+
+			brandRegex += regexCharActual;
+		}
+
+		const findBrandRegex = new RegExp("\\s" + brandRegex + "\\s", "g");
+
+		if (findBrandRegex.test(product.toLowerCase() + " ")) {
 			productBrand = brand;
 
 			return false; // Break
@@ -153,7 +167,7 @@ const parseBrand = (product: string) => {
 		return true; // Continue
 	});
 
-	return productBrand;
+	return productBrand.toUpperCase();
 };
 
 const parseSettings = (product: string) => {
