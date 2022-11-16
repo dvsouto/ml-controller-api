@@ -1,4 +1,4 @@
-import { DataSource, Entity, EntityOptions, EntityTarget, FindOneOptions, FindOptionsWhere, InsertResult, ObjectID, Repository, UpdateResult } from "typeorm"; 
+import { DataSource, Entity, EntityOptions, EntityTarget, FindOneOptions, FindOptionsWhere, InsertResult, Repository } from "typeorm"; 
 import { AppDataSource, CliDataSource } from "@src/data-source";
 import { IBaseModel, ModelColumn } from "./interfaces";
 import _, { forEach } from "lodash";
