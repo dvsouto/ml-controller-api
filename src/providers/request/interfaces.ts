@@ -1,16 +1,19 @@
 interface IRequest {
   initialize: (options?: IRequestInstanceOptions) => IRequest,
-  request: (uri: string, method: RequestMethod, params?: object, options?: IRequestOptions) => Promise<void>,
-  get: (uri: string, params?: object, options?: IRequestOptions) => Promise<void>,
-  post: (uri: string, params?: object, options?: IRequestOptions) => Promise<void>,
-  put: (uri: string, params?: object, options?: IRequestOptions) => Promise<void>,
-  delete: (uri: string, params?: object, options?: IRequestOptions) => Promise<void>,
+  getRequestInstance: () => IRequest,
+  request: (uri: string, method: RequestMethod, params?: object, options?: IRequestOptions) => Promise<unknown>,
+  get: (uri: string, params?: object, options?: IRequestOptions) => Promise<unknown>,
+  post: (uri: string, params?: object, options?: IRequestOptions) => Promise<unknown>,
+  put: (uri: string, params?: object, options?: IRequestOptions) => Promise<unknown>,
+  delete: (uri: string, params?: object, options?: IRequestOptions) => Promise<unknown>,
 }
 
 interface IRequestInstanceOptions {
   baseUrl?: string;
   timeout?: number;
-  headers?: object;
+  headers?: RequestHeaders;
+  withCredentials?: boolean;
+  validateStatus?: (status: number) => boolean;
 }
 
 interface IRequestOptions {
@@ -25,9 +28,15 @@ enum RequestMethod {
   DELETE = "delete"
 }
 
+type TRecordHeaderValue = string | string[] | number | boolean | null;
+type RequestHeaders = Record<string, TRecordHeaderValue>;
+
 export {
 	IRequest,
 	IRequestInstanceOptions,
 	IRequestOptions,
-	RequestMethod
+	RequestMethod,
+
+	TRecordHeaderValue,
+	RequestHeaders,
 };

@@ -14,12 +14,16 @@ class AxiosRequest implements IRequest {
 			baseURL: options.baseUrl || undefined,
 			timeout: options.timeout || 10000,
 			headers: options.headers || {},
+			withCredentials: options.withCredentials || false,
+			validateStatus: options.validateStatus || undefined,
 		} as AxiosRequestConfig);
 
 		return this;
 	}
 
-	public async request(uri: string, method: RequestMethod, params?: object, options?: IRequestOptions): Promise<void> {
+	public getRequestInstance: () => this;
+
+	public async request(uri: string, method: RequestMethod, params?: object, options?: IRequestOptions) {
 		if (! options) {
 			options = {} as IRequestOptions;
 		}
@@ -43,19 +47,19 @@ class AxiosRequest implements IRequest {
 		} as AxiosRequestConfig);
 	}
 
-	public async get(uri: string, params?: object, options?: IRequestOptions): Promise<void> {
+	public async get(uri: string, params?: object, options?: IRequestOptions) {
 		return this.request(uri, RequestMethod.GET, params, options);
 	}
 
-	public async post(uri: string, params?: object, options?: IRequestOptions): Promise<void> {
+	public async post(uri: string, params?: object, options?: IRequestOptions) {
 		return this.request(uri, RequestMethod.POST, params, options);
 	}
 
-	public async put(uri: string, params?: object, options?: IRequestOptions): Promise<void> {
+	public async put(uri: string, params?: object, options?: IRequestOptions) {
 		return this.request(uri, RequestMethod.PUT, params, options);
 	}
 
-	public async delete(uri: string, params?: object, options?: IRequestOptions): Promise<void> {
+	public async delete(uri: string, params?: object, options?: IRequestOptions) {
 		return this.request(uri, RequestMethod.DELETE, params, options);
 	}
 }

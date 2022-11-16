@@ -19,24 +19,28 @@ class RequestProvider implements IRequest {
 
 		return this;
 	}
+
+	public getRequestInstance(): IRequest{
+		return this.instance;
+	}
   
-	public async request(uri: string, method: RequestMethod, params?: object, options?: IRequestOptions): Promise<void> {
+	public async request(uri: string, method: RequestMethod, params?: object, options?: IRequestOptions): Promise<unknown> {
 		return this.instance.request(uri, method, params, options);
 	}
 
-	public async get(uri: string, params?: object, options?: IRequestOptions): Promise<void> {
+	public async get(uri: string, params?: object, options?: IRequestOptions): Promise<unknown> {
 		return this.instance.get(uri, params, options);
 	}
 
-	public async post(uri: string, params?: object, options?: IRequestOptions): Promise<void> {
+	public async post(uri: string, params?: object, options?: IRequestOptions): Promise<unknown> {
 		return this.instance.post(uri, params, options);
 	}
 
-	public async put(uri: string, params?: object, options?: IRequestOptions): Promise<void> {
+	public async put(uri: string, params?: object, options?: IRequestOptions): Promise<unknown> {
 		return this.instance.put(uri, params, options);
 	}
 
-	public async delete(uri: string, params?: object, options?: IRequestOptions): Promise<void> {
+	public async delete(uri: string, params?: object, options?: IRequestOptions): Promise<unknown> {
 		return this.instance.delete(uri, params, options);
 	}
 
