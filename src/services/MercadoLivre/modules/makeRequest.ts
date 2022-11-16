@@ -1,6 +1,6 @@
 import { MLResponse } from "../interfaces";
 
-const makeRequest = (request: Promise<void>): Promise<MLResponse> => {
+const makeRequest = (request: Promise<unknown>): Promise<MLResponse> => {
 	return new Promise((resolve, reject) => {
 		request
 			.then((response) => resolve(response as unknown as MLResponse))
