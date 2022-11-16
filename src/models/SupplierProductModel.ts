@@ -2,12 +2,16 @@ import { SupplierProduct } from "@entity/SupplierProduct";
 import { BaseModel } from "./BaseModel";
 
 type SupplierProductData = {
-	id: string;
+	id?: string;
+	supplier_id: string;
 	sku: string;
   name: string;
+	prettier_name: string;
+	supplier_product_category_id?: string;
+	supplier_product_family_id?: string;
 	picture?: string;
 	link?: string;
-	supplier_value: number;
+	supplier_price: number;
 	default_profit_percentage: number;
 	created_at?: Date;
 	updated_at?: Date;

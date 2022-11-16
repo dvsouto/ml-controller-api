@@ -80,9 +80,9 @@ export class CreateProductFamilyTable1668504396505 implements MigrationInterface
 		const supplierForeignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("supplier_id") !== -1);
 		const supplierProductCategoryForeignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("supplier_product_category_id") !== -1);
 
-		await queryRunner.dropTable("supplier_product_family", true);
 		await queryRunner.dropForeignKey("supplier_product_family", supplierForeignKey);
 		await queryRunner.dropForeignKey("supplier_product_family", supplierProductCategoryForeignKey);
+		await queryRunner.dropTable("supplier_product_family", true);
 	}
 
 }

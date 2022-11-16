@@ -27,6 +27,7 @@ const dictionaries = {
 		"a.press": "de Alta Pressão",
 		"a.varal": "Art Varal",
 		"b.m": "Bica Móvel",
+		"c.s.m": "C.S.M",
 		"bomba subm": "bomba submersa",
 		"c/l": "Com Ladrão",
 		"convert.de ferrug.": "Convertedor de Ferrugem",
@@ -53,7 +54,13 @@ const dictionaries = {
 
 		// Regex
 		"/^ext\s/": "Extensão\s",
+		"/^0[,]{0,1}[tT][rR][iI][lL][hH][oO]\s/": "Trilho\s",
 		"/[cC][/][\\s]{0,1}[cC]/": "Com Cabo",
+
+		// Regex marks with points
+		"/[jJ][.]{0,1}[\\s]+[rR][.]{0,1}[\\s]+[iI][lL][uU][mM][iI][nN][aA][cCçÇ][aAãÃ][oO]/": "J. R. Iluminação",
+		"/[jJ][.]{0,1}[\\s]+[rR][aA][uU]/": "J. Rau",
+		"/[lL][.]{0,1}[sS][tT][rR][eE][fF][eE][zZ][zZ][aA]/": "L.Strefezza",
 	},
 	regex: {
 		"/([0-9]{1,3})[mM]([\\sx]{0,1})/": "$1M$2", // Ex: 10m
@@ -131,7 +138,7 @@ const dictionaries = {
 	abbreviated: { 
 		"p/": "para",
 		"c/": "com",
-		"s/": "sem"
+		"s/": "sem",
 	},
 	truncated_names: {
 		"abrac": "Abracadeira",
@@ -176,6 +183,7 @@ const dictionaries = {
 		"mang": "Mangueira",
 		"prolong": "Prolongador",
 		"prot-calha": "Protetor de Calha",
+		"paraf": "Parafuso",
 		"parafu": "Parafuso",
 		"reflet": "Refletor",
 		"reg": "Registro",

@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { Supplier } from "./Supplier";
 import { SupplierProductCategory } from "./SupplierProductCategory";
+import { SupplierProduct } from "./SupplierProduct";
 
 @Entity('supplier_product_family')
 export class SupplierProductFamily {
@@ -12,6 +13,9 @@ export class SupplierProductFamily {
 
     @Column()
     supplier_product_category_id: string;
+
+    @Column({ nullable: true })
+    code: string;
 
     @Column()
     name: string;
@@ -32,6 +36,10 @@ export class SupplierProductFamily {
     @ManyToOne(type => SupplierProductCategory)
     @JoinColumn({ name: 'supplier_product_category_id', referencedColumnName: "id" })
     supplier_product_category: Promise<SupplierProductCategory>;
+
+    @OneToMany(type => SupplierProduct, supplier_product => supplier_product.supplier_product_family_id)
+    @JoinColumn({ name: 'id', referencedColumnName: "supplier_product_family_id" })
+    products: Promise<SupplierProduct[]>;
 
     @CreateDateColumn()
     created_at: Date;

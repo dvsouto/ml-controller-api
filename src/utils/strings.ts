@@ -1,8 +1,9 @@
-import { exit } from "process";
 import { brands } from "./brands";
 import { dictionaries } from "./dictionaries";
 import { settings } from "./settings";
 import { toRegex } from "./toRegex";
+
+import _ from "lodash";
 
 enum STR_GENRE {
   FEM = "FEM",
@@ -192,6 +193,63 @@ const parseSettings = (product: string) => {
 	return productSettings;
 };
 
+/**
+ * @deprecated 15/nov/2022 Davi Souto - Switched to web crawler (eletroleste)
+ */
+const parseFamily = (productData: object, families: Array<string>) => {
+	const settingsRegex = Object.keys(dictionaries.regex);
+	let product = productData["prettier_name"].toLowerCase() + " ";
+
+	product = product.replace(productData["brand"].toLowerCase(), "");
+
+	// Remove settings in name
+	_.forEach(settingsRegex, (settingRegexStr) => {
+		const settingRegex = new RegExp(settingRegexStr.substring(1, settingRegexStr.length-1).replace(/[(]/g, "").replace(/[)]/g, ""), "g");
+
+		product = product.replace(settingRegex, "");
+	});
+
+	const removeDictionaries = [
+		Object.keys(dictionaries.lowercase), 
+		Object.keys(dictionaries.uppercase),
+		Object.keys(dictionaries.sizes),
+		Object.values(dictionaries.abbreviated)
+	];
+	
+	// Remove lowercases, uppercases, sizes, abreviated, etc.
+	_.forEach(removeDictionaries, (removeDictionary) => {
+		_.forEach(removeDictionary, (keyRemove) => {
+			product = product.replace(" " + keyRemove + " ", "");
+		});
+	});
+
+	// Remove duplicated spaces
+	product = product.replace(/\s\s+/g, " ");
+
+	let productRegex = "";
+
+	// Create characters regex
+	for (let i = 0; i < product.length; i++) {
+		const charActual = product.charAt(i);
+		let regexCharActual = toRegex[charActual];
+
+		if (! regexCharActual) {
+			regexCharActual = "[a-zA-Z0-9\\s-_\\/,.+=*%$#@'\"]+";
+		}
+
+		productRegex += regexCharActual;
+	}
+
+	_.each(families, (family) => {
+		console.log(family);
+	});
+
+	console.log("FAMILY:", product);
+
+	return productRegex;
+	// process.exit(1);
+};
+
 const replaceAccents = (str: string): string => {
 	return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
@@ -200,5 +258,6 @@ export {
 	parseProduct,
 	parseBrand,
 	parseSettings,
+	parseFamily,
 	replaceAccents,
 };

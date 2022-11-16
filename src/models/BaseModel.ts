@@ -1,7 +1,8 @@
-import { DataSource, Entity, EntityOptions, EntityTarget, FindOneOptions, FindOptionsWhere, InsertResult, Repository } from "typeorm"; 
+import { DataSource, Entity, EntityOptions, EntityTarget, FindOneOptions, FindOptionsWhere, InsertResult, ObjectID, Repository, UpdateResult } from "typeorm"; 
 import { AppDataSource, CliDataSource } from "@src/data-source";
 import { IBaseModel, ModelColumn } from "./interfaces";
 import _, { forEach } from "lodash";
+import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 class BaseModel<ModelData> implements IBaseModel<ModelData> {
 	declare entity: EntityTarget<{ (options?: EntityOptions): ClassDecorator; (name?: string, options?: EntityOptions): ClassDecorator; }>;
@@ -24,7 +25,9 @@ class BaseModel<ModelData> implements IBaseModel<ModelData> {
 	}
 
 	private getDataSource(): DataSource{
-		return require.main.filename.includes("/cli.js") ? CliDataSource() : AppDataSource();
+		const req_file = require.main.filename;
+
+		return req_file.includes("/cli.js") || req_file.includes("/cli/run.ts") ? CliDataSource() : AppDataSource();
 	}
 
 	public findAll(): Promise<typeof Entity[]>{
@@ -43,7 +46,22 @@ class BaseModel<ModelData> implements IBaseModel<ModelData> {
 		return this.repository.insert(data);
 	}
 
-	public async insertOrUpdate(where: FindOptionsWhere<typeof Entity> | FindOptionsWhere<typeof Entity>[], data: ModelData): Promise<any>{
+	public async update(where: FindOptionsWhere<typeof Entity> | FindOptionsWhere<typeof Entity>[], partialEntity: QueryDeepPartialEntity<typeof Entity>): Promise<typeof Entity>{
+		const findItem = await this.repository.findOne({
+			where
+		});
+		
+		return this.repository.save({
+			...findItem,
+			...partialEntity
+		});
+	}
+
+	public async updateById(id: string | number, partialEntity: QueryDeepPartialEntity<typeof Entity>): Promise<typeof Entity>{
+		return this.update({ id }, partialEntity);
+	}
+
+	public async insertOrUpdate(where: FindOptionsWhere<typeof Entity> | FindOptionsWhere<typeof Entity>[], data: ModelData): Promise<unknown>{
 		const findData = await this.findOneBy(where);
 
 		if (findData) {
@@ -57,7 +75,7 @@ class BaseModel<ModelData> implements IBaseModel<ModelData> {
 		return this.insert(data);
 	}
 
-	public async insertIfNotExists(where: FindOptionsWhere<typeof Entity> | FindOptionsWhere<typeof Entity>[], data: ModelData): Promise<any>{
+	public async insertIfNotExists(where: FindOptionsWhere<typeof Entity> | FindOptionsWhere<typeof Entity>[], data: ModelData): Promise<unknown>{
 		const findData = await this.findOneBy(where);
 
 		if (findData) {

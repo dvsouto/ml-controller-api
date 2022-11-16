@@ -5,6 +5,7 @@ type SupplierProductFamilyData = {
 	id: string;
 	supplier_id: string;
 	supplier_product_category_id: string;
+	code?: string;
   name: string;
   prettier_name: string;
 	picture?: string;

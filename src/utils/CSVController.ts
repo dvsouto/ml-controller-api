@@ -3,7 +3,8 @@ import { parse, Parser } from "csv-parse";
 import * as fs from "fs";
 
 import { isFloat } from "@utils/numbers";
-import { parseBrand, parseProduct, parseSettings } from "@utils/strings";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { parseBrand, parseProduct, parseSettings, parseFamily } from "@utils/strings";
 
 type CSVOptions = {
 	delimiterField: string
@@ -111,7 +112,9 @@ class CSVController {
 		const _parser = parse({
 			delimiter: this.getOptions().delimiterField,
 			quote: this.getOptions().delimiterText,
-			columns: ["cod", "embalagem", "nome", "preco"]
+			columns: ["sku", "packing", "name", "price"],
+			skipEmptyLines: true,
+			from_line: 2
 		});
 
 		return _parser;
@@ -141,6 +144,10 @@ class CSVController {
 	private onCsvReadLine(record: object){
 		record = this.parseData(record);
 
+		if (record["name"] == "." || record["name"] == "/") {
+			return;
+		}
+
 		console.log("Record", record);
 
 		this.records.push(record);
@@ -149,21 +156,25 @@ class CSVController {
 	private parseData(data: object): object{
 		Object.keys(data).forEach(key => {
 			let columnData = data[key].trim();
+			
 			const intColumnData = parseInt(columnData);
 			const floatColumnData = parseFloat(columnData.toString().replace(/[,]/g, "."));
 
-			if (Number.isInteger(intColumnData)){
-				columnData = parseInt(columnData);
+			if (! /[a-zA-Z]/g.test(columnData)) {
+				if (Number.isInteger(intColumnData)){
+					columnData = parseInt(columnData);
+				}
+	
+				if (isFloat(floatColumnData)) {
+					columnData = floatColumnData;
+				}
 			}
 
-			if (isFloat(floatColumnData)) {
-				columnData = floatColumnData;
-			}
-
-			if (typeof columnData === "string" && key == "nome") {
-				data["nome_parseado"] = parseProduct(columnData);
-				data["marca"] = parseBrand(data["nome_parseado"]);
-				data["settings"] = parseSettings(data["nome_parseado"]);
+			if (typeof columnData === "string" && key == "name") {
+				data["prettier_name"] = parseProduct(columnData);
+				data["brand"] = parseBrand(data["prettier_name"]);
+				data["settings"] = parseSettings(data["prettier_name"]);
+				// data["product_family"] = parseFamily(data, productFamilies);
 			}
 
 			data[key] = columnData;

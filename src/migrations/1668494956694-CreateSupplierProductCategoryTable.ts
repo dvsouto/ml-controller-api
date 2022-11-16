@@ -59,7 +59,7 @@ export class CreateSupplierProductCategoryTable1668494956694 implements Migratio
 		const table = await queryRunner.getTable("supplier_product_category");
 		const supplierForeignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("supplier_id") !== -1);
 
-		await queryRunner.dropTable("supplier_product_category", true);
 		await queryRunner.dropForeignKey("supplier_product_category", supplierForeignKey);
+		await queryRunner.dropTable("supplier_product_category", true);
 	}
 }

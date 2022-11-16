@@ -5,15 +5,25 @@ class Cli {
 	declare finalized_at: Date;
 	declare server: Server;
 	declare result: unknown;
+	declare args: Array<string>;
 
 	declare protected resultOutput: boolean;
 
-	constructor(){
+	constructor(args?: Array<string>){
 		this.started_at = new Date();
-
+		this.args = [];
+		
 		const date_now = this.started_at.getDate().toString().padStart(2, "0") + "/" + (this.started_at.getMonth()+1).toString().padStart(2, "0") + "/" + this.started_at.getFullYear();
 		const time_now = this.started_at.getHours().toString().padStart(2, "0") + ":" + this.started_at.getMinutes().toString().padStart(2, "0") + ":" + this.started_at.getSeconds().toString().padStart(2, "0") + ":" + this.started_at.getMilliseconds().toString().padStart(3, "0");
 		
+		if (args.length > 3) {
+			args.shift(); // Node path
+			args.shift(); // Cli.ts path
+			args.shift(); // Script argument path
+
+			this.args = args.map(arg => arg.trim());
+		}
+
 		console.log("Script started at " + date_now + " " + time_now);
 
 		this.resultOutput = true;
@@ -45,6 +55,18 @@ class Cli {
 
 	protected setResultOutput(resultOutput: boolean){
 		this.resultOutput = resultOutput;
+	}
+
+	protected getArguments(): Array<string>{
+		return this.args;
+	}
+
+	protected getArgument(idx: number = 0): string{
+		if (this.args.length-1 >= idx) {
+			return this.args[idx];
+		}
+
+		return null;
 	}
 }
 

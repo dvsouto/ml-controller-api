@@ -39,7 +39,7 @@ export default class CreateSupplierProductFamilies implements Seeder {
 			const addItem = arr[idxAdd];
 
 			console.log("@Add Family:", addItem["name"]);
-
+			addItem["name"] = addItem["name"].trim();
 			supplierProductFamilyModel.insertOrUpdate({ name: addItem["name"], supplier_product_category_id: addItem["supplier_product_category_id"] }, addItem)
 				.then(() => {
 					idxAdd--;

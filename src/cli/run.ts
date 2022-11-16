@@ -4,7 +4,7 @@ const AsyncFunction = (async () => {}).constructor;
 
 (async () => {
 	const { default: scriptClass } = await import("./" + script + ".ts"); // Dynamic import
-	const instance = new scriptClass(); // Instance class
+	const instance = new scriptClass(process.argv); // Instance class
 
 	// Run script
 	await instance.load();
