@@ -17,6 +17,17 @@ class GetEletrolesteProductsFamilies extends Cli {
 
 	public async run(){
 		await this.eletroleste.home.getHome();
+		await this.eletroleste.products.requestListItens();
+		const families = await this.eletroleste.families.getAllFamilies();
+
+		const listProducts = await this.eletroleste.products.getListAllProducts(families);
+
+		// console.log(home);
+		console.log(listProducts);
+		console.log("TOTAL:", Object.keys(listProducts).length);
+
+		// console.log(families);
+
 	}
 }
 

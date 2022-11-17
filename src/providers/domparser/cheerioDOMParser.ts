@@ -5,14 +5,24 @@ import { IDOMParserInstance, IDOMParserInstanceOptions} from "./interfaces";
 class CheerioDOMParser implements IDOMParserInstance {
 	declare instance: cheerio.CheerioAPI;
 
-	public initialize(options?: IDOMParserInstanceOptions) {
-		if (! options) {
-			options = {} as IDOMParserInstanceOptions;
-		}
+	// public initialize(options?: IDOMParserInstanceOptions) {
+	// 	if (! options) {
+	// 		options = {} as IDOMParserInstanceOptions;
+	// 	}
 
-		this.instance = cheerio.load("");
+	// 	this.instance = cheerio.load("");
 
-		return this;
+	// 	return this;
+	// }
+
+	public loadHtml(html: string) {
+		this.instance = cheerio.load(html);
+
+		return this.instance;
+	}
+
+	public loadFile(file: string) {
+		return this.loadHtml(file);
 	}
 }
 

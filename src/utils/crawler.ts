@@ -1,6 +1,8 @@
 import { RequestProvider } from "@providers/request";
 import { DOMParserProvider } from "@providers/domparser";
 import { RequestHeaders, RequestMethod } from "@src/providers/request/interfaces";
+import { AxiosResponse } from "axios";
+import { CheerioAPI } from "cheerio";
 
 type CrawlerOptions = {
   baseUrl?: string;
@@ -52,6 +54,15 @@ type CrawlerMakeRequestOptions = {
 	method?: RequestMethod;
 	responseType?: CrawlerResponseType;
 	applyAcceptHeader?: boolean;
+	headers?: RequestHeaders;
+	params?: object;
+}
+
+
+type CrawlerResponse = {
+	httpCode: number;
+	data: string | object | CheerioAPI;
+	response: AxiosResponse;
 }
 
 class Crawler {
@@ -131,6 +142,13 @@ class Crawler {
 		});
 	}
 
+	public setContentTypeHeader(contentType: string): void{
+		this.setHeaders({
+			...this.headers,
+			"Content-Type": contentType,
+		});
+	}
+
 	public getRequestProvider(): RequestProvider{
 		return this.requestProvider;
 	}
@@ -139,7 +157,7 @@ class Crawler {
 		return this.domParserProvider;
 	}
 
-	public makeRequest(options?: CrawlerMakeRequestOptions): void{
+	private applyDefaultMakeRequestOptions(options: CrawlerMakeRequestOptions): CrawlerMakeRequestOptions {
 		if (! options) {
 			options = {} as CrawlerMakeRequestOptions;
 		}
@@ -156,9 +174,78 @@ class Crawler {
 			options.responseType = CrawlerResponseType.TEXT;
 		}
 
-		// switch(options.responseType) {
+		if (! options.applyAcceptHeader) {
+			options.applyAcceptHeader = true;
+		}
 
-		// }
+		if (! options.headers) {
+			options.headers = {};
+		}
+
+
+		if (! options.params) {
+			options.params = {};
+		}
+
+		return options;
+	}
+
+	public async makeRequest(options?: CrawlerMakeRequestOptions): Promise<CrawlerResponse>{
+		options = this.applyDefaultMakeRequestOptions(options);
+
+		const headers = {
+			...this.headers,
+			...options.headers
+		};
+
+		if (this.persistHeaders && options.headers) {
+			this.setHeaders(headers);
+		}
+
+		return new Promise((resolve) => {
+
+			this.getRequestProvider().request(options.url, options.method, options.params, {
+				headers: headers,
+				forceQueryString: options.method === RequestMethod.GET
+			}).then((response: AxiosResponse) => {
+				let data = response.data;
+	
+				switch(options.responseType) {
+				case CrawlerResponseType.DOM:
+					if (typeof data === "object") {
+						data = JSON.stringify(data);
+					}
+	
+					data = this.domParserProvider.loadHtml(data).getDOM();
+	
+					break;
+				case CrawlerResponseType.JSON:
+					if (typeof data === "string") {
+						data = JSON.parse(data);
+					}
+	
+					break;
+				case CrawlerResponseType.TEXT:
+				case CrawlerResponseType.HTML:
+				default:
+					if (typeof data === "object") {
+						data = JSON.stringify(data);
+					}
+	
+					data = data.toString();
+	
+					break;
+				}
+	
+				const responseReturn = {
+					httpCode: response.status,
+					response: response,
+					data: data
+				} as CrawlerResponse;
+
+				resolve(responseReturn);
+			});
+		});
 	}
 }
 
