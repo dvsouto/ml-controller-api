@@ -12,7 +12,10 @@ type SupplierProductData = {
 	picture?: string;
 	link?: string;
 	supplier_price: number;
+  supplier_promotional_price?: number;
 	default_profit_percentage: number;
+	tax_classification?: string;
+	package_code?: string;
 	created_at?: Date;
 	updated_at?: Date;
 }

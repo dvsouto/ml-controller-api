@@ -15,7 +15,7 @@ class EletrolesteService {
 			baseUrl: Environment().get("ELETROLESTE_URL"),
 			headers: {
 				"Access-Control-Allow-Origin": "*", 
-				"Cookie": "_ga=GA1.3.10933283.1667970714; _gid=GA1.3.1300971562.1668490798; ASP.NET_SessionId=b4u0b0ra5xomsfmbew4gqijw; ARRAffinity=8d82ad0f62b6e1c08b496bf2b9efe4fcba4505d0fb74604f0ca2adad819a30fe; ARRAffinitySameSite=8d82ad0f62b6e1c08b496bf2b9efe4fcba4505d0fb74604f0ca2adad819a30fe; _gat_gtag_UA_36940294_1=1",
+				// "Cookie": "_ga=GA1.3.10933283.1667970714; _gid=GA1.3.1300971562.1668490798; ASP.NET_SessionId=b4u0b0ra5xomsfmbew4gqijw; ARRAffinity=8d82ad0f62b6e1c08b496bf2b9efe4fcba4505d0fb74604f0ca2adad819a30fe; ARRAffinitySameSite=8d82ad0f62b6e1c08b496bf2b9efe4fcba4505d0fb74604f0ca2adad819a30fe; _gat_gtag_UA_36940294_1=1",
 				"DNT": 1,
 				"Host": "www.eletroleste.com.br",
 			}

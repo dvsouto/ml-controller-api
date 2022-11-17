@@ -107,6 +107,7 @@ class Crawler {
 			baseUrl: this.baseUrl,
 			headers: this.headers,
 			withCredentials: true,
+			timeout: 60000,
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			validateStatus: (status: number) => {
 				return true;

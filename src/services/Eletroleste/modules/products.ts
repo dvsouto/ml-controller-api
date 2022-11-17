@@ -1,6 +1,15 @@
 import { Crawler, CrawlerResponseType, RequestMethod } from "@src/utils/crawler";
 import { EletrolesteSession } from "..";
 
+type EletrolesteProduct = {
+	sku: number;
+	name: string;
+	package: string;
+	taxClassification: string | number;
+	price: number;
+	promotionalPrice: number;
+	familyCode: string;
+}
 const EletrolesteProductsModule = (getCrawler: () => Crawler, getSession: () => EletrolesteSession) => {
 	const requestListItens = async () => {
 		const crawler = getCrawler();
@@ -82,7 +91,7 @@ const EletrolesteProductsModule = (getCrawler: () => Crawler, getSession: () => 
 
 		console.log("@EletrolesteListProducts", findFamily);
 
-		const _requestListProducts = async (findFamily: string = "", page: number = 1) => {
+		const _requestListProducts = async (findFamily: string = "", page: number = 1): Promise<Array<EletrolesteProduct>> => {
 			const requestData = (await requestListProducts(findFamily, page)).data["d"];
 
 			const findedItens = parseInt(requestData[0]["QuantidadeItensLista"]);
@@ -91,14 +100,14 @@ const EletrolesteProductsModule = (getCrawler: () => Crawler, getSession: () => 
 
 			for(const product of requestData) {
 				products.push({
-					code: parseInt(product["Codigo"]),
+					sku: parseInt(product["Codigo"]),
 					name: product["Descricao"],
-					package: product["Embalagem"],
-					taxClassification: product["ClassificacaoFiscal"],
+					package: product["Embalagem"] || "",
+					taxClassification: product["ClassificacaoFiscal"] || "",
 					price: parseFloat(product["Preco"]),
-					promotionPrice: parseFloat(product["Promocao"]),
+					promotionalPrice: parseFloat(product["Promocao"]),
 					familyCode: product["Familia"]
-				});
+				} as EletrolesteProduct);
 			}
 
 			if (page < pages) {
@@ -111,8 +120,8 @@ const EletrolesteProductsModule = (getCrawler: () => Crawler, getSession: () => 
 		return await _requestListProducts(findFamily);
 	};
 
-	const getListAllProducts = async (families: Array<string>) => {
-		const allProducts = {};
+	const getListAllProducts = async (families: Array<string>): Promise<Array<EletrolesteProduct>> => {
+		const allProducts = {} as Array<EletrolesteProduct>;
 
 		for(const familyCode of families){
 			allProducts[familyCode] = await getListProducts(familyCode);
@@ -132,4 +141,6 @@ const EletrolesteProductsModule = (getCrawler: () => Crawler, getSession: () => 
 
 export {
 	EletrolesteProductsModule,
+
+	EletrolesteProduct,
 };

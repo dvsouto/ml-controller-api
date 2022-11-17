@@ -34,7 +34,6 @@ class DOMParserProvider implements IDOMParserProvider {
 	}
 
 	public loadHtml(html: string){
-		console.log("@Instance2", this.instance);
 		this.dom = this.instance.loadHtml(html);
 
 		return this;

@@ -36,8 +36,17 @@ export class SupplierProduct {
     @Column({ precision: 4, nullable: false })
     supplier_price: number;
 
+    @Column({ precision: 4, nullable: true })
+    supplier_promotional_price: number;
+
     @Column({ precision: 2, nullable: false, default: 50 })
     default_profit_percentage: number;
+
+    @Column({ nullable: true })
+    tax_classification: string;
+
+    @Column({ nullable: true })
+    package_code: string;
 
     @ManyToOne(type => Supplier)
     @JoinColumn({ name: 'supplier_id', referencedColumnName: "id" })

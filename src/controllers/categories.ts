@@ -12,7 +12,7 @@ import { SettingsModel, SettingsType } from "@models/Settings";
 class CategoriesController {
 	public async list(req: Request, res: Response) {
 		// const category = AppDataSource.getRepository(Category);
-		const categoryModel = new CategoryModel();
+		// const categoryModel = new CategoryModel();
 
 		// categoryModel.insert({
 		// 	ml_id: "haha",
@@ -32,6 +32,18 @@ class CategoriesController {
 	public async listAll(req: Request, res: Response) {
 		const mercado_livre = new MercadoLivreService();
 		const ml_response = await mercado_livre.categories.listAll();
+
+		res.json({
+			success: ml_response.success,
+			data: ml_response.data
+		});
+	}
+
+	public async find(req: Request, res: Response) {
+		const product = req.query.product as string;
+
+		const mercado_livre = new MercadoLivreService();
+		const ml_response = await mercado_livre.categories.find(product);
 
 		res.json({
 			success: ml_response.success,
