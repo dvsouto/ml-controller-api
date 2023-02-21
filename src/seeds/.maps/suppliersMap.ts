@@ -1,4 +1,4 @@
-import { SupplierData } from "../../models/SupplierModel";
+import { SupplierData } from "../../models/Supplier";
 
 export default [
   {
