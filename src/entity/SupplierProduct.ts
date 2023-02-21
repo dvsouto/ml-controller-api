@@ -9,43 +9,43 @@ export class SupplierProduct {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
+    @Column({ type: "varchar" })
 	supplier_id: string;
 
-    @Column()
+    @Column({ type: "varchar" })
     sku: string;
 
-    @Column()
+    @Column({ type: "varchar" })
     name: string;
 
-    @Column()
+    @Column({ type: "varchar" })
     prettier_name: string;
 
-    @Column({ nullable: true })
+    @Column({ type: "varchar",nullable: true })
     supplier_product_category_id: string;
 
-    @Column({ nullable: true })
+    @Column({ type: "varchar",nullable: true })
 	supplier_product_family_id: string;
 
-    @Column({ nullable: true })
+    @Column({ type: "varchar", nullable: true })
     picture: string;
 
-    @Column({ nullable: true })
+    @Column({ type: "varchar", nullable: true })
     link: string;
    
-    @Column({ precision: 4, nullable: false })
+    @Column({ type: "decimal", precision: 4, nullable: false })
     supplier_price: number;
 
-    @Column({ precision: 4, nullable: true })
+    @Column({ type: "decimal", precision: 4, nullable: true })
     supplier_promotional_price: number;
 
-    @Column({ precision: 2, nullable: false, default: 50 })
+    @Column({ type: "decimal", precision: 2, nullable: false, default: 50 })
     default_profit_percentage: number;
 
-    @Column({ nullable: true })
+    @Column({ type: "varchar", nullable: true })
     tax_classification: string;
 
-    @Column({ nullable: true })
+    @Column({ type: "varchar", nullable: true })
     package_code: string;
 
     @ManyToOne(type => Supplier)

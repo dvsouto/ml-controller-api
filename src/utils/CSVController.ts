@@ -4,7 +4,7 @@ import * as fs from "fs";
 
 import { isFloat } from "@utils/numbers";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { parseBrand, parseProduct, parseSettings, parseFamily } from "@utils/strings";
+import { parseBrand, parseProduct, parseSettings, parseFamily, replaceToUpperCase } from "@utils/strings";
 
 type CSVOptions = {
 	delimiterField: string
@@ -174,6 +174,10 @@ class CSVController {
 				data["prettier_name"] = parseProduct(columnData);
 				data["brand"] = parseBrand(data["prettier_name"]);
 				data["settings"] = parseSettings(data["prettier_name"]);
+
+				if (data["brand"] !== "UNKNOWN") {
+					data["prettier_name"] = replaceToUpperCase(data["brand"], data["prettier_name"]);
+				}
 				// data["product_family"] = parseFamily(data, productFamilies);
 			}
 

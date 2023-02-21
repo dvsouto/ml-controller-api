@@ -1,7 +1,7 @@
 import { Cli } from "./cli";
 import { CSVController } from "@utils/CSVController";
 
-import { SupplierModel, SupplierData } from "@models/SupplierModel";
+import { SupplierModel, SupplierData } from "@models/Supplier";
 import { SupplierProductModel, SupplierProductData } from "@models/SupplierProductModel";
 
 // import _ from "lodash";
@@ -51,6 +51,7 @@ class LoadProductsCsv extends Cli {
 				supplier_id: this.supplier_id,
 			}, {
 				...addItem as SupplierProductData,
+				sku: sku.toString(),
 				picture: this.getPictureUrl(sku),
 				supplier_price: (addItem["price"] !== undefined) ? addItem["price"] : addItem["supplier_price"],
 				supplier_id: this.supplier_id,

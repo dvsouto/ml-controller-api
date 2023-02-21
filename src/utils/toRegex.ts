@@ -63,6 +63,31 @@ const toRegex = {
 	" ": "[\\.\\s/-]{0,1}",
 };
 
+const transformToRegexStr = (str: string): string => {
+	let makeRegex = "";
+	
+	for (let i = 0; i < str.length; i++) {
+		const charActual = str.charAt(i);
+		const regexCharActual = toRegex[charActual];
+
+		makeRegex += regexCharActual;
+	}
+
+	return makeRegex;
+};
+
+const transformToRegex = (str: string, addSpaces: boolean = false): RegExp => {
+	str = transformToRegexStr(str);
+
+	if (addSpaces) {
+		str = "\\s" + str + "\\s";
+	}
+
+	return new RegExp(str, "g");
+};
+
 export {
 	toRegex,
+	transformToRegexStr,
+	transformToRegex,
 };

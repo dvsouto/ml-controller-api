@@ -1,7 +1,7 @@
 import { brands } from "./brands";
 import { dictionaries } from "./dictionaries";
 import { settings } from "./settings";
-import { toRegex } from "./toRegex";
+import { toRegex, transformToRegex } from "./toRegex";
 
 import _ from "lodash";
 
@@ -254,10 +254,28 @@ const replaceAccents = (str: string): string => {
 	return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
 
+const replaceToUpperCase = (search: string, str: string): string => {
+	const searchRegex = transformToRegex(search.toLowerCase(), true);
+	
+	str = " " + str + " ";
+
+	return str.replace(searchRegex, " " + search.toUpperCase() + " ").trim();
+};
+
+const replaceToLowerCase = (search: string, str: string): string => {
+	const searchRegex = transformToRegex(search.toLowerCase(), true);
+
+	str = " " + str + " ";
+
+	return str.replace(searchRegex, " " + search.toLowerCase() + " ").trim();
+};
+
 export {
 	parseProduct,
 	parseBrand,
 	parseSettings,
 	parseFamily,
 	replaceAccents,
+	replaceToUpperCase,
+	replaceToLowerCase,
 };

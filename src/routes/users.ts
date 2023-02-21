@@ -6,6 +6,7 @@ const usersRouter = (router: Router) => {
 	const controller = new UsersController();
 
 	router.get("/me", controller.me);
+	router.get("/create-test", controller.createTestUser);
 
 	return router;
 };

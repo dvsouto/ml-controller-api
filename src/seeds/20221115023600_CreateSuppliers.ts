@@ -2,7 +2,7 @@
 import { Factory, Seeder } from "typeorm-seeding";
 import { DataSource } from "typeorm";
 import { Supplier } from "@entity/Supplier";
-import { SupplierData } from "@models/SupplierModel";
+import { SupplierData } from "@models/Supplier";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 import suppliersMap from "./.maps/suppliersMap";
