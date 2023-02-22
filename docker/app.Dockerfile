@@ -1,6 +1,11 @@
 # Dockerfile 
 FROM node:16.15-alpine3.14
 
+ARG APP_STAGE
+ENV APP_STAGE=${APP_STAGE}
+
+RUN echo "Running on ${APP_STAGE} stage"
+
 # Create user and group
 RUN addgroup --system app
 RUN adduser --disabled-password --system -G app app
@@ -37,4 +42,10 @@ RUN yarn install
 
 # Expose port and run
 EXPOSE 3000
-CMD [ "sudo", "yarn", "dev" ]
+
+RUN if [ "$APP_STAGE" = "prod" ]; then \
+  sudo yarn build; \
+fi
+
+CMD sudo yarn $(echo ${APP_STAGE})
+# CMD [ "sudo", "yarn", "dev" ]

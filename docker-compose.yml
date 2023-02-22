@@ -19,6 +19,8 @@ services:
     build:
       context: .
       dockerfile: ./docker/app.Dockerfile
+      args:
+        APP_STAGE: 'prod'
     environment:
       DB_SCHEMA: postgres
       DB_USER: postgres
@@ -41,6 +43,8 @@ services:
     build:
       context: .
       dockerfile: ./docker/postgres.Dockerfile
+      args:
+        APP_STAGE: 'dev'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

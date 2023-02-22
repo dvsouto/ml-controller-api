@@ -6,6 +6,7 @@ import { SupplierProductModel, SupplierProductData } from "@models/SupplierProdu
 import { EletrolesteProduct } from "@src/services/Eletroleste/modules/products";
 
 import * as fs from "fs";
+import { SupplierProductFamilyModel } from "@src/models/SupplierProductFamily";
 
 // import { SupplierModel, SupplierData } from "@models/SupplierModel";
 
@@ -24,6 +25,7 @@ class GetEletrolesteBrands extends Cli {
 	public async run(){
 		const supplierBrandModel = new SupplierBrandModel();
 		const supplierProductModel = new SupplierProductModel();
+		const supplierProductFamilyModel = new SupplierProductFamilyModel();
 		
 		const listProducts = {};
 

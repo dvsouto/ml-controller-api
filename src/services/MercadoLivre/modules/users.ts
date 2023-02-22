@@ -15,7 +15,7 @@ const MLUsersModule = (getRequestProvider: () => RequestProvider) => {
 		const requestProvider = getRequestProvider();
 
 		return makeRequest(requestProvider.post("/users/test_user", {
-			site_id: Environment.get("MERCADO_LIVRE_SITE_ID")
+			site_id: Environment().get("MERCADO_LIVRE_SITE_ID")
 		}));
 	};
 

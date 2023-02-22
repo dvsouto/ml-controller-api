@@ -18,7 +18,7 @@ export class Category {
     @Column({ nullable: true })
     permalink: string;
 
-    @OneToMany(type => Subcategory, subcategory => subcategory.category_ml_id)
+    @OneToMany(() => Subcategory, subcategory => subcategory.category)
     @JoinColumn({ name: 'ml_id', referencedColumnName: "category_ml_id" })
     subcategories: Promise<Subcategory[]>;
 

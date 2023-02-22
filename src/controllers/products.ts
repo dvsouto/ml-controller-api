@@ -6,11 +6,10 @@ class ProductsController {
 
 	public async test(req: Request, res: Response) {
 		const mercado_livre = new MercadoLivreService();
-		const ml_response = await mercado_livre.getAccessToken().catch((err) => console.log(err));
 
 		res.json({
 			success: true,
-			data: ml_response.data
+			data: mercado_livre.auth.getAccessToken()
 		});
 	}
 }

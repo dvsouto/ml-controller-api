@@ -1,14 +1,21 @@
 module.exports = {
 	presets: [
 		[
-			"@babel/preset-env",
+			"@babel/env",
 			{
 				targets: {
 					node: "current"
 				}
 			}
 		],
-		"@babel/preset-typescript"
+		[
+			"@babel/typescript",
+			{
+				allowDeclareFields: true,
+				onlyRemoveTypeImports: true,
+				optimizeConstEnums: true
+			}
+		]
 	],
 	plugins: [
 		["module-resolver", {
@@ -25,7 +32,22 @@ module.exports = {
 				"@utils": "./src/utils"
 			}
 		}],
-    ["@babel/plugin-transform-arrow-functions", { "spec": true }]
+    [
+			"@babel/transform-arrow-functions", { 
+				"spec": true 
+			}
+		],
+		[
+			"@babel/proposal-decorators", {
+				"version": "2023-01"
+			}
+		],
+		[
+			"transform-class-properties", { 
+				"spec": true 
+			}
+		],
+		"@babel/proposal-object-rest-spread"
 	],
 	ignore: [
 		"**/*.spec.ts"

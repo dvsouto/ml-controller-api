@@ -5,6 +5,8 @@ import { DataSource, DataSourceOptions } from "typeorm";
 
 import dotenv from "dotenv";
 
+import { join } from "path";
+
 dotenv.config();
 
 const dataSourceOptions = {
@@ -15,13 +17,15 @@ const dataSourceOptions = {
 	synchronize: false,
 	logging: false,
 	migrationsTransactionMode: "each",
-	entities: ["./src/entity/*.ts"],
-	migrations: ["./src/migrations/*.ts"],
+	// entities: ["./src/entity/*.ts"],
+	// migrations: ["./src/migrations/*.ts"],
+	entities: [join(__dirname, "entity", "*.{ts,js}")],
+	migrations: [join(__dirname, "migrations", "*.{ts,js}")],
 	subscribers: [],
 	extra: {
-		options: "-c statement_timeout=5500ms",
+		options: "-c statement_timeout=15000ms",
 		idleTimeoutMillis: 10000,
-		max: 10,
+		max: 25,
 		connectionTimeoutMillis: 5000,
 	},
 };

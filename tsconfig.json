@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es2021",                                  
-    "lib": ["es6"],                                           
+    "target": "ESNext",                                  
+    "lib": ["ES2021"],                                           
     "experimentalDecorators": true,                      
     "emitDecoratorMetadata": true,                     
-    "module": "commonjs",                                
+    "module": "CommonJS",
     "rootDir": "./src",                                  
     "baseUrl": ".",                                      
     "paths": {
@@ -34,7 +34,11 @@
     "forceConsistentCasingInFileNames": true,            
     "strict": false,                                     
     "skipDefaultLibCheck": true,                         
-    "skipLibCheck": true                                 
+    "skipLibCheck": true,
+    "declaration": true,
+    "isolatedModules": false,
+    "noEmit": false,
+    "noEmitOnError": false
   },
   "include": [
     "src/**/*"

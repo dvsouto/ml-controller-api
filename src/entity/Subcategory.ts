@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne } from "typeorm";
 import { Category } from "./Category";
 
 @Entity('subcategory')
@@ -27,7 +27,7 @@ export class Subcategory {
     @Column({ default: true })
     has_children: boolean;
 
-    @OneToOne(type => Category)
+    @ManyToOne(() => Category, category => category.subcategories)
     @JoinColumn({ name: 'category_ml_id', referencedColumnName: "ml_id" })
     category: Promise<Category>;
 

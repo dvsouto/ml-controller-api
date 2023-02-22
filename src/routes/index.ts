@@ -3,7 +3,7 @@ import { categoriesRouter } from "./categories";
 import { productsRouter } from "./products";
 import { usersRouter } from "./users";
 
-export = {
+export {
 	authRouter,
 	categoriesRouter,
 	productsRouter,

@@ -4,6 +4,7 @@ import _ from "lodash";
 import { Request, Response } from "express";
 import { MercadoLivreService } from "@services/MercadoLivre";
 import { Dumper, DumperStatus } from "@utils/dumper";
+import { ObjectUtil } from "@utils/object";
 
 import { CategoryModel } from "@models/Category";
 import { SubcategoryModel } from "@models/Subcategory";
@@ -123,8 +124,11 @@ class CategoriesController {
 				const subcategoryModel = new SubcategoryModel();
 				const settingsModel = new SettingsModel();
 
-				const doAddSettings = (settings: object) => {
-					_.forOwn(settings, async (value_setting, key_setting) => {
+				console.log("Total categories:", total_categories);
+				console.log("Total subcategories:", total_subcategories);
+
+				const doAddSettings = async (settings: object) => {
+					for (const [key_setting, value_setting] of ObjectUtil.makeIterable(settings) as Iterable<[string, object]>) {
 						if (add_settings.includes(key_setting)) {
 							let settings_type = typeof value_setting as SettingsType;
 
@@ -151,23 +155,25 @@ class CategoriesController {
 							}
 
 							// Create settings
-							const this_settings = await settingsModel.insertOrUpdate({ name: key_setting }, {
+							console.log("@AddSetting", key_setting);
+							
+							await settingsModel.insertOrUpdate({ name: key_setting }, {
 								name: key_setting,
 								type: settings_type
 							});
 						}
-					});
+					}
 				};
 
 				const p_add_categories = [];
 
-				_.forEach(add_categories, (obj_category) => {
+				for (const obj_category of ObjectUtil.makeIterable(add_categories, false) as Iterable<object>) {
 					console.log("@Add category:", obj_category["id"], obj_category["name"]);
 
 					const ml_category = all_categories[obj_category["id"]];
 					const ml_category_settings = ml_category["settings"] as object;
 
-					doAddSettings(ml_category_settings);
+					// await doAddSettings(ml_category_settings);
 				
 					// Add category				
 					p_add_categories.push(new Promise(resolve_category => {
@@ -176,10 +182,10 @@ class CategoriesController {
 							name: ml_category["name"] as string,
 							permalink: ml_category["permalink"] as string | null,
 							picture: ml_category["picture"] as string | null
-						}).then((this_category) => {
+						}).then(async (this_category) => {
 							// const p_add_subcategories = [];
 
-							const addNextSubcategory = () => {
+							const addNextSubcategory = async () => {
 								const key_subcategory = (obj_category["subcategories"] as Array<string>).shift() as string;
 								const ml_subcategory = all_categories[key_subcategory];
 								const ml_subcategory_path_from_root = ml_subcategory["path_from_root"] as Array<object>;
@@ -190,7 +196,7 @@ class CategoriesController {
 
 								console.log("@Add subcategory:", ml_subcategory["id"], ml_subcategory["name"]);
 
-								subcategoryModel.insertOrUpdate({ ml_id: ml_subcategory["id"] }, {
+								await subcategoryModel.insertOrUpdate({ ml_id: ml_subcategory["id"] }, {
 									ml_id: ml_subcategory["id"],
 									category_ml_id: this_category["ml_id"],
 									subcategory_ml_id: subcategory_ml_id,
@@ -198,30 +204,27 @@ class CategoriesController {
 									picture: ml_subcategory["picture"],
 									permalink: ml_subcategory["permalink"],
 									has_children: has_children
-								}).then(() => {
+								}).then(async () => {
 									if ((obj_category["subcategories"] as Array<string>).length <= 0) {
 										resolve_category(true);
 									} else {
-										addNextSubcategory();
+										await addNextSubcategory();
 									}
-								}).catch((err) => {
+								}).catch(async (err) => {
 									console.log("ERRO - ", err);
 
 									if ((obj_category["subcategories"] as Array<string>).length <= 0) {
 										resolve_category(true);
 									} else {
-										addNextSubcategory();
+										await addNextSubcategory();
 									}
 								});
 							};
 
-							addNextSubcategory();
+							await addNextSubcategory();
 						});
 					}));
-				});
-
-				console.log("Total categories:", total_categories);
-				console.log("Total subcategories:", total_subcategories);
+				}
 
 				Promise.allSettled(p_add_categories).then(() => {
 					console.log("OK!");

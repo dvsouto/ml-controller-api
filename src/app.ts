@@ -7,7 +7,7 @@
 
 import { Server } from "./server";
 
-(async () => {
+export const execute = (async () => {
 	const app = new Server();
 	
 	await app.initialize();
